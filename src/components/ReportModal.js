@@ -16,13 +16,13 @@ Modal.setAppElement(document.getElementById("root"));
 
 const ReportList = (props) => {
   const predictions = useSelector((state) => state.predictions.predictions);
-  console.log(predictions);
+  // console.log(predictions);
 
-  const reportItems = predictions.map((pred) => {
-    console.log(pred);
+  const reportItems = predictions.map((pred, idx) => {
+    // console.log(pred);
     return (
-      <li key={pred.id}>
-        <div class="report">
+      <li key={idx}>
+        <div className="report">
           <span style={{ flex: 2 }}>Applicant ID: {pred.id}</span>
           <span style={{ flex: 1, marginLeft: 20 }}>Score: {pred.score}</span>
         </div>

@@ -4,7 +4,7 @@ import settings from "../../constants/settings";
 export const GET_PREDICTION = "GET_PREDICTION";
 
 export const predict = (id, token) => {
-  console.log("api_token", token);
+  // console.log("api_token", token);
   return async (dispatch, getState) => {
     const response = await fetch(settings.api_url + `/predict/${id}/`, {
       method: "GET",
