@@ -43,7 +43,7 @@ const Dropzone = ({ module = "aid" }) => {
   console.log("Dropzone module", module);
   const postFile = useCallback(
     (data) => {
-      const config = {
+      const options = {
         headers: {
           Authorization: `Token ${token}`,
           "Access-Control-Allow-Origin": "*",
@@ -52,7 +52,7 @@ const Dropzone = ({ module = "aid" }) => {
       };
 
       axios
-        .post(settings.api_url + "/upload/?module=" + module, data, config)
+        .post(settings.api_url + "/upload/?module=" + module, data, options)
         .then(async () => {
           await dispatch(fileActions.fetchFiles(token, module));
         })
