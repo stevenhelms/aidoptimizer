@@ -61,8 +61,11 @@ export const auth = (email, password) => {
     };
 
     let url = settings.api_url + "/auth/login/";
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+    };
     axios
-      .post(url, authData)
+      .post(url, authData, { headers: headers })
       .then((response) => {
         // console.log('--- actions/auth.js const auth ---');
         // console.log(response);

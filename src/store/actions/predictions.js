@@ -10,6 +10,7 @@ export const predict = (id, token) => {
       method: "GET",
       headers: {
         Authorization: "Token " + token,
+        "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
       },
     });

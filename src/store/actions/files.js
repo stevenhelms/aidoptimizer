@@ -16,6 +16,7 @@ export const fetchFiles = (token, fileType) => {
       method: "GET",
       headers: {
         Authorization: "Token " + token,
+        "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
       },
     });
