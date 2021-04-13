@@ -49,6 +49,7 @@ const Dropzone = ({ module = "aid" }) => {
           "Access-Control-Allow-Origin": "*",
           // "Content-Type": "multipart/form-data",
           "x-amz-acl": "public-read",
+          "x-bioinformatix": "20210413",
         },
       };
 
