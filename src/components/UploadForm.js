@@ -48,6 +48,7 @@ const Dropzone = ({ module = "aid" }) => {
           Authorization: `Token ${token}`,
           "Access-Control-Allow-Origin": "*",
           // "Content-Type": "multipart/form-data",
+          "x-amz-acl": "public-read",
         },
       };
 
