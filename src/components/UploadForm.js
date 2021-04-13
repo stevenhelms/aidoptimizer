@@ -47,7 +47,7 @@ const Dropzone = ({ module = "aid" }) => {
         headers: {
           Authorization: `Token ${token}`,
           "Access-Control-Allow-Origin": "*",
-          // "Content-Type": "multipart/form-data",
+          "Content-Type": "application/x-www-form-urlencoded",
           "x-amz-acl": "public-read",
           "x-bioinformatix": "20210413",
         },
