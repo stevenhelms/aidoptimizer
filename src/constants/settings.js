@@ -12,4 +12,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     : "https://aidapi.bioinformatix.io";
 }
 
+settings["media_url"] =
+  "https://bioinformatix.nyc3.digitaloceanspaces.com/bioinformatix/media/";
+
 export default settings;
