@@ -9,6 +9,7 @@ import * as fileActions from "../store/actions/files";
 import * as predictionActions from "../store/actions/predictions";
 import { IS_REPORTING, IS_LOADING } from "../store/actions/runtime";
 import ReportModal from "./ReportModal";
+import settings from "../constants/settings";
 
 const File = (props) => {
   const dispatch = useDispatch();
@@ -28,6 +29,14 @@ const File = (props) => {
     }
   };
 
+  let download_url = "";
+  if (props.predictions) {
+    if (props.predictions.startsWith("/")) {
+      download_url = settings.api_url + props.predictions;
+    } else {
+      download_url = props.predictions;
+    }
+  }
   return (
     <div className={styles.file}>
       <span
@@ -46,7 +55,7 @@ const File = (props) => {
           <AnchorButton
             icon="download"
             // intent={Intent.PRIMARY}
-            href={props.predictions}
+            href={download_url}
             target="_blank"
             small={true}
           >
