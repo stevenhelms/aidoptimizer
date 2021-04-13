@@ -74,7 +74,8 @@ const ReportModal = (props) => {
         <div className={Classes.DIALOG_FOOTER_ACTIONS}>
           <AnchorButton
             intent={Intent.PRIMARY}
-            href={settings.media_url + filename}
+            // href={settings.media_url + filename}
+            href={settings.api_url + "/media/" + filename}
             target="_blank"
           >
             Download
