@@ -118,10 +118,20 @@ class UploadForm extends Component {
       <div className="App-container">
         <div className="App-uploadform">
           <p>
-            Choose a CSV file to upload. Please note the file must comply with a
-            specific format. If you are unsure of the format, please use the
-            template found
-            <a href="aid-template.csv"> here</a>.
+            Choose a CSV file to upload. Please note the uploads must comply
+            with a specific format for the predictors to run properly. You may
+            use one of the following templates:
+            <ul>
+              <li>
+                <a href="aid-template.csv">Aid Optimizer</a>
+              </li>
+              <li>
+                <a href="default-template.csv">Default Predictor</a>
+              </li>
+              <li>
+                <a href="attrition-template.csv">Attrition Predictor</a>
+              </li>
+            </ul>
           </p>
           <Dropzone module={this.props.module} />
         </div>
