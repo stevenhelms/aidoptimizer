@@ -30,10 +30,10 @@ class AidOptimizer extends Component {
             <UploadForm module="aid" />
             <Report token={this.props.token} module="aid" />
           </TabPanel>
-          {/* <TabPanel>
+          <TabPanel>
             <UploadForm module="attrition" />
             <Report token={this.props.token} module="attrition" />
-          </TabPanel> */}
+          </TabPanel>
           <TabPanel>
             <UploadForm module="fincdefault" />
             <Report token={this.props.token} module="fincdefault" />
