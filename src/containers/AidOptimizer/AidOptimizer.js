@@ -22,7 +22,7 @@ class AidOptimizer extends Component {
         <Tabs>
           <TabList>
             <Tab>Aid</Tab>
-            {/* <Tab>Attrition</Tab> */}
+            <Tab>Attrition</Tab>
             <Tab>Default</Tab>
           </TabList>
 
