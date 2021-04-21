@@ -7,15 +7,15 @@ import thunk from "redux-thunk";
 
 import "./index.css";
 import App from "./App";
-import * as serviceWorker from "./serviceWorker";
+// import * as serviceWorker from "./serviceWorker";
 
 import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 import filesReducer from "./store/reducers/files";
-import runtimeReducer from './store/reducers/runtime';
-import predictionReducer from './store/reducers/predictions';
-import authReducer from './store/reducers/auth';
+import runtimeReducer from "./store/reducers/runtime";
+import predictionReducer from "./store/reducers/predictions";
+import authReducer from "./store/reducers/auth";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -39,8 +39,8 @@ const app = (
   </Provider>
 );
 
-ReactDOM.render( app, document.getElementById( 'root' ) );
-serviceWorker.register();
+ReactDOM.render(app, document.getElementById("root"));
+// serviceWorker.register();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
