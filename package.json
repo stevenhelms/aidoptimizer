@@ -5,7 +5,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.26.1",
     "@fortawesome/fontawesome-free": "^5.13.0",
-    "axios": "^0.21.1",
+    "axios": "^1.6.0",
     "react": "^17.0.2",
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^17.0.2",
