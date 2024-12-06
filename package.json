@@ -6,8 +6,8 @@
   "author": "Steve Helms <steve@helms.place> (https://github.com/stevenhelms/)",
   "repository": "github:stevenhelms/aidoptimizer ",
   "engines": {
-    "node": "< 20.0.0",
-    "npm": ">=10.0.0"
+    "node": "< 19.0.0",
+    "npm": "<10.0.0"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.26.1",
