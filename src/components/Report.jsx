@@ -1,11 +1,11 @@
 import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { connect } from "react-redux";
-import ActivityIndicator from "react-loader-spinner";
+import { Grid } from "react-loader-spinner";
 import { AnchorButton } from "@blueprintjs/core";
 
 import styles from "./Report.module.css";
-import * as fileActions from "../store/actions/files";
+import * as fileActions from "../features/filesActions";
 import * as predictionActions from "../store/actions/predictions";
 import { IS_REPORTING, IS_LOADING } from "../store/actions/runtime";
 import ReportModal from "./ReportModal";
@@ -16,11 +16,11 @@ const File = (props) => {
 
   const getPrediction = async (id) => {
     console.log("clicked " + id);
-    dispatch({ type: IS_LOADING, loading: true });
+    dispatch({ type: IS_LOADING, isLoading: true });
 
     try {
       await dispatch(predictionActions.predict(id, props.token));
-      dispatch({ type: IS_LOADING, loading: false });
+      dispatch({ type: IS_LOADING, isLoading: false });
       // Open Modal with Results
       dispatch({ type: IS_REPORTING, reporting: true });
       await dispatch(fileActions.fetchFiles(props.token, props.module));
@@ -69,7 +69,7 @@ const File = (props) => {
 
 const FileList = (props) => {
   const files = props.files;
-  const listItems = files.map((file) => {
+  const listItems = files?.map((file) => {
     // console.log(file);
     return (
       <li key={`file_${file.id}`}>
@@ -89,7 +89,7 @@ const FileList = (props) => {
 };
 
 const Report = (props) => {
-  const isLoading = useSelector((state) => state.runtime.loading);
+  const isLoading = useSelector((state) => state.runtime.isLoading);
   const reportType = props.module ? props.module : "aid";
 
   const files = useSelector((state) => state.files.allFiles);
@@ -114,16 +114,19 @@ const Report = (props) => {
     <div className={styles.container}>
       <div className={styles.report}>
         <h1 className={styles.reportTitle}>Previous Data Uploads</h1>
-        <span>(click to file name calculate predictions)</span>
+        <span>(click on the file name calculate predictions)</span>
         <div className={styles.reportContainer}>
           {isLoading ? (
             <div className={styles.reportLoader}>
-              <ActivityIndicator
-                type="Grid"
+              <Grid
+                visible={true}
+                height="100"
+                width="100"
                 color="#666666"
-                height={100}
-                width={100}
-                // timeout={3000} //3 secs
+                ariaLabel="grid-loading"
+                radius="12.5"
+                wrapperStyle={{}}
+                wrapperClass="grid-wrapper"
               />
               <p>Predicting Results...</p>
             </div>

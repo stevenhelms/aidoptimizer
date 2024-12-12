@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import settings from "../constants/settings";
 import * as fileActions from "../store/actions/files";
+import { fetchFiles } from "../features/filesActions";
 
 const getColor = (props) => {
   if (props.isDragAccept) {
@@ -36,7 +37,7 @@ const Container = styled.div`
   transition: border 0.24s ease-in-out;
 `;
 
-const Dropzone = ({ module = "aid" }) => {
+const MyDropzone = ({ module = "aid" }) => {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
@@ -56,7 +57,7 @@ const Dropzone = ({ module = "aid" }) => {
       axios
         .post(settings.api_url + "/upload/?module=" + module, data, options)
         .then(async () => {
-          await dispatch(fileActions.fetchFiles(token, module));
+          await dispatch(fetchFiles(token, module));
         })
         .catch(function (error) {
           console.log(error);
@@ -102,9 +103,7 @@ const Dropzone = ({ module = "aid" }) => {
 
   return (
     <div className="container">
-      <Container
-        {...getRootProps({ isDragActive, isDragAccept, isDragReject })}
-      >
+      <Container {...getRootProps()}>
         <input {...getInputProps()} />
         <p>Drag 'n' drop CSV data files here, or click to select files</p>
       </Container>
@@ -121,19 +120,19 @@ class UploadForm extends Component {
             Choose a CSV file to upload. Please note the uploads must comply
             with a specific format for the predictors to run properly. You may
             use one of the following templates:
-            <ul>
-              <li>
-                <a href="aid-template.csv">Aid Optimizer</a>
-              </li>
-              <li>
-                <a href="default-template.csv">Default Predictor</a>
-              </li>
-              <li>
-                <a href="attrition-template.csv">Attrition Predictor</a>
-              </li>
-            </ul>
           </p>
-          <Dropzone module={this.props.module} />
+          <ul>
+            <li>
+              <a href="aid-template.csv">Aid Optimizer</a>
+            </li>
+            <li>
+              <a href="default-template.csv">Default Predictor</a>
+            </li>
+            <li>
+              <a href="attrition-template.csv">Attrition Predictor</a>
+            </li>
+          </ul>
+          <MyDropzone module={this.props.module} />
         </div>
       </div>
     );

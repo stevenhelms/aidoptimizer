@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useReducer } from "react";
-import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import React, { useEffect, useState, useCallback, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Button, InputGroup, Intent, Tooltip } from "@blueprintjs/core";
-import ActivityIndicator from "react-loader-spinner";
+import { Grid } from "react-loader-spinner";
 import classes from "./Auth.module.css";
-import * as actions from "../../store/actions/index";
+import { userLogin } from "../../features/authActions";
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 const FORM_UPDATE_INTENT = "FORM_UPDATE_INTENT";
@@ -52,11 +52,16 @@ const formReducer = (state, action) => {
 };
 
 const Auth = (props) => {
+  const { isLoading, userToken } = useSelector((state) => state.auth);
+  // const { isLoading: filesLoading } = useSelector((state) => state.files);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   //   const [disabled, setDisabled] = useState(false);
 
-//   const [emailIntent, setEmailIntent] = useState("none");
-//   const [passwordIntent, setPasswordIntent] = useState("none");
+  //   const [emailIntent, setEmailIntent] = useState("none");
+  //   const [passwordIntent, setPasswordIntent] = useState("none");
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -85,18 +90,16 @@ const Auth = (props) => {
     },
   };
 
-    const lockButton = // useCallback(() => 
-      (
-        <Tooltip
-          content={`${showPassword ? "Hide" : "Show"} Password`}
-        >
-          <Button
-            icon={showPassword ? "unlock" : "lock"}
-            intent={Intent.WARNING}
-            minimal={true}
-            onClick={() => setShowPassword(!showPassword)}
-          />
-        </Tooltip>
+  const lockButton = // useCallback(() =>
+    (
+      <Tooltip content={`${showPassword ? "Hide" : "Show"} Password`}>
+        <Button
+          icon={showPassword ? "unlock" : "lock"}
+          intent={Intent.WARNING}
+          minimal={true}
+          onClick={() => setShowPassword(!showPassword)}
+        />
+      </Tooltip>
       // ),
       // [disabled, showPassword]
     );
@@ -120,7 +123,8 @@ const Auth = (props) => {
     }
 
     if (rules.isEmail) {
-      const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      const pattern =
+        /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
       isValid = pattern.test(value) && isValid;
     }
 
@@ -154,7 +158,7 @@ const Auth = (props) => {
       // console.log(state.controls);
       event.preventDefault();
       // console.log(formState);
-      props.onAuth(formState.inputValues.email, formState.inputValues.password);
+      userLogin(formState.inputValues.email, formState.inputValues.password);
     },
     [props, formState] //state.controls.email.value, state.controls.password.value]
   );
@@ -173,23 +177,26 @@ const Auth = (props) => {
     }
   }
 
-  let authRedirect = null;
-  if (props.isAuthenticated) {
-    authRedirect = <Redirect to={props.authRedirectPath} />;
-  }
+  useEffect(() => {
+    if (userToken) {
+      navigate("/optimizer");
+    }
+  }, [userToken, navigate]);
 
   return (
     <div className={classes.Auth}>
       <h3>Aid Optimizer Login</h3>
-      {authRedirect}
       {errorMessage}
-      {props.loading ? (
-        <ActivityIndicator
-          type="Grid"
+      {isLoading ? (
+        <Grid
+          visible={true}
+          height="100"
+          width="100"
           color="#666666"
-          height={50}
-          width={50}
-          // timeout={3000} //3 secs
+          ariaLabel="grid-loading"
+          radius="12.5"
+          wrapperStyle={{}}
+          wrapperClass="grid-wrapper"
         />
       ) : (
         <form onSubmit={submitHandler}>
@@ -204,6 +211,7 @@ const Auth = (props) => {
             intent={formState.inputIntents.email}
             onChange={(event) => inputChangedHandler(event, "email")}
             round={true}
+            autoComplete="email"
           />
           <InputGroup
             className={classes.authInput}
@@ -217,6 +225,7 @@ const Auth = (props) => {
             intent={formState.inputIntents.password}
             onChange={(event) => inputChangedHandler(event, "password")}
             round={true}
+            autoComplete="current-password"
           />
           <Button type="submit">Submit</Button>
         </form>
@@ -225,21 +234,21 @@ const Auth = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.auth.loading,
-    error: state.auth.error,
-    errorField: state.auth.errorField,
-    isAuthenticated: state.auth.token !== null,
-    authRedirectPath: state.auth.authRedirectPath,
-  };
-};
+// const mapStateToProps = (state) => {
+//   return {
+//     isLoading: state.auth.isLoading,
+//     error: state.auth.error,
+//     errorField: state.auth.errorField,
+//     isAuthenticated: state.auth.token !== null,
+//     authRedirectPath: state.auth.authRedirectPath,
+//   };
+// };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onAuth: (email, password) => dispatch(actions.auth(email, password)),
-    onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
-  };
-};
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     onAuth: (email, password) => dispatch(actions.auth(email, password)),
+//     onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
+//   };
+// };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default Auth;

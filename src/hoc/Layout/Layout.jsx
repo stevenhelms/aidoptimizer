@@ -9,7 +9,7 @@ import Header from "../../components/Header";
 const Layout = (props) => {
   return (
     <Aux>
-      <Header isAuth={props.isAuthenticated} />
+      <Header />
       <main className={styles.Container}>{props.children}</main>
     </Aux>
   );
@@ -21,4 +21,5 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Layout);
+// export default connect(mapStateToProps)(Layout);
+export default Layout;
