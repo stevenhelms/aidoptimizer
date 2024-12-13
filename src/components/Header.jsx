@@ -38,7 +38,6 @@ const Header = () => {
         {!isFetching && userToken !== null ? (
           <NavLink to="/logout">
             <Button
-              className="bp3-minimal"
               icon="log-out"
               text="Logout"
               onClick={() => dispatch(logout())}

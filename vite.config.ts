@@ -8,10 +8,19 @@ export default defineConfig(({ command, mode }) => {
         base: '/',
         plugins: [react()],
         define: {
-          'process.env.YOUR_STRING_VARIABLE': JSON.stringify(env.YOUR_STRING_VARIABLE),
-          'process.env.YOUR_BOOLEAN_VARIABLE': env.YOUR_BOOLEAN_VARIABLE,
+          // 'process.env.YOUR_STRING_VARIABLE': JSON.stringify(env.YOUR_STRING_VARIABLE),
+          // 'process.env.YOUR_BOOLEAN_VARIABLE': env.YOUR_BOOLEAN_VARIABLE,
           // If you want to exposes all env variables, which is not recommended
-          // 'process.env': env
+          'process.env': env
+        },
+        server: {
+          proxy: {
+            '/api': {
+              target: process.env.AIDOPTIMIZER_API_URL,
+              changeOrigin: true,
+              // rewrite: (path) => path.replace(/^\/api/, ''),
+            },
+          },
         },
     };
 });

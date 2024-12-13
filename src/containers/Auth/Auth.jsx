@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useReducer } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -57,6 +58,7 @@ const Auth = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { register, handleSubmit } = useForm();
 
   //   const [disabled, setDisabled] = useState(false);
 
@@ -183,6 +185,10 @@ const Auth = (props) => {
     }
   }, [userToken, navigate]);
 
+  const submitForm = (data) => {
+    dispatch(userLogin(data));
+  };
+
   return (
     <div className={classes.Auth}>
       <h3>Aid Optimizer Login</h3>
@@ -199,7 +205,8 @@ const Auth = (props) => {
           wrapperClass="grid-wrapper"
         />
       ) : (
-        <form onSubmit={submitHandler}>
+        // <form onSubmit={submitHandler}>
+        <form onSubmit={handleSubmit(submitForm)}>
           <InputGroup
             className={classes.authInput}
             // disabled={disabled}

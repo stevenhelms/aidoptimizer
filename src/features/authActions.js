@@ -12,12 +12,12 @@ export const userLogin = createAsyncThunk(
       // configure header's Content-Type as JSON
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
       };
 
       const { data } = await axios.post(
-        `${backendURL}/api/user/login`,
+        `${backendURL}/api/auth/login/`,
         { email, password },
         config
       );
@@ -44,6 +44,7 @@ export const registerUser = createAsyncThunk(
       const config = {
         headers: {
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
       };
 
