@@ -17,7 +17,7 @@ export const userLogin = createAsyncThunk(
       };
 
       const { data } = await axios.post(
-        `${backendURL}/api/auth/login/`,
+        `${backendURL}/auth/login/`,
         { email, password },
         config
       );
@@ -28,32 +28,6 @@ export const userLogin = createAsyncThunk(
       return data;
     } catch (error) {
       // return custom error message from API if any
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const registerUser = createAsyncThunk(
-  "auth/register",
-  async ({ firstName, email, password }, { rejectWithValue }) => {
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      };
-
-      await axios.post(
-        `${backendURL}/api/user/register`,
-        { firstName, email, password },
-        config
-      );
-    } catch (error) {
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message);
       } else {
