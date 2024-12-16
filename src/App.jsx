@@ -10,7 +10,12 @@ import Logout from "./containers/Auth/Logout/Logout";
 
 import "./index.css";
 import "normalize.css/normalize.css";
-import "@blueprintjs/core/lib/css/blueprint.css";
+// import "@blueprintjs/core/lib/css/blueprint.css";
+
+import CssBaseline from "@mui/material/CssBaseline";
+import Container from "@mui/material/Container";
+
+import Header from "./components/Header";
 
 const App = (props) => {
   // useEffect( () => {
@@ -40,21 +45,21 @@ const App = (props) => {
   }
   */
 
-  console.log("App.js isAuth: " + props.isAuthenticated);
-  // console.log('App.js token: ' + props.token);
   return (
     <BrowserRouter>
-      <Layout>
+      <CssBaseline />
+      <Container>
+        <Header />
         <Routes>
           <Route path="/" exact={true} element={<AidOptimizer />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/logout" component={<Logout />} />
+          <Route path="/logout" element={<Logout />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/optimizer" element={<AidOptimizer />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </Layout>
+      </Container>
     </BrowserRouter>
   );
 };

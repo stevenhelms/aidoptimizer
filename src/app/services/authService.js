@@ -11,7 +11,7 @@ export const authApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.userToken;
       if (token) {
-        headers.set("authorization", `Bearer ${token}`);
+        headers.set("authorization", `Token ${token}`);
         return headers;
       }
     },
@@ -21,6 +21,7 @@ export const authApi = createApi({
       query: () => ({
         url: "/user/",
         method: "GET",
+        credentials: "include",
       }),
     }),
   }),

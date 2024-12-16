@@ -1,31 +1,36 @@
 import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
+import {
+  loginSuccess,
+  loginFailure,
+  loginStart,
+  setCredentials,
+} from "./authSlice";
 import settings from "../constants/settings";
 
 const backendURL = settings.api_url;
 
 export const userLogin = createAsyncThunk(
   "auth/login",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ username, password, csrfmiddlewaretoken }, { rejectWithValue }) => {
     try {
       // configure header's Content-Type as JSON
       const config = {
         headers: {
           "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfmiddlewaretoken,
         },
+        withCredentials: true, // send cookies when cross-domain requests
       };
 
-      const { data } = await axios.post(
-        `${backendURL}/auth/login/`,
-        { email, password },
+      const response = await axios.post(
+        `${backendURL}/api-token-auth/`,
+        { username, password, csrfmiddlewaretoken },
         config
       );
-
-      // store user's token in local storage
-      localStorage.setItem("userToken", data.userToken);
-
-      return data;
+      return response.data;
     } catch (error) {
       // return custom error message from API if any
       if (error.response && error.response.data.message) {

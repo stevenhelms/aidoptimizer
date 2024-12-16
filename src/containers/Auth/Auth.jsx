@@ -1,198 +1,115 @@
 import React, { useEffect, useState, useCallback, useReducer } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
+import { redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import Cookies from "universal-cookie";
 
-import { Button, InputGroup, Intent, Tooltip } from "@blueprintjs/core";
+// import { Button, InputGroup, Intent, Tooltip } from "@blueprintjs/core";
+
+import { Button } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import FormControl from "@mui/material/FormControl";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
 import { Grid } from "react-loader-spinner";
-import classes from "./Auth.module.css";
+
 import { userLogin } from "../../features/authActions";
-
-const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
-const FORM_UPDATE_INTENT = "FORM_UPDATE_INTENT";
-
-const formReducer = (state, action) => {
-  let updatedIntents = {};
-
-  switch (action.type) {
-    case FORM_INPUT_UPDATE:
-      const updatedValues = {
-        ...state.inputValues,
-        [action.input]: action.value,
-      };
-      const updatedValidities = {
-        ...state.inputValidities,
-        [action.input]: action.isValid,
-      };
-      updatedIntents = {
-        ...state.inputIntents,
-        [action.input]: action.intent,
-      };
-      let updatedFormIsValid = true;
-      for (const key in updatedValidities) {
-        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-      }
-      return {
-        formIsValid: updatedFormIsValid,
-        inputValidities: updatedValidities,
-        inputValues: updatedValues,
-        inputIntents: updatedIntents,
-      };
-    case FORM_UPDATE_INTENT:
-      updatedIntents = {
-        ...state.inputIntents,
-        [action.input]: action.intent,
-      };
-      return {
-        ...state,
-        inputIntents: updatedIntents,
-      };
-    default:
-      return state;
-  }
-};
+import { loginSuccess, setCredentials } from "../../features/authSlice";
 
 const Auth = (props) => {
-  const { isLoading, userToken } = useSelector((state) => state.auth);
-  // const { isLoading: filesLoading } = useSelector((state) => state.files);
+  const { isLoading, userToken, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
+  const cookies = new Cookies();
+  const csrftoken = cookies.get("csrftoken");
 
-  //   const [disabled, setDisabled] = useState(false);
-
-  //   const [emailIntent, setEmailIntent] = useState("none");
-  //   const [passwordIntent, setPasswordIntent] = useState("none");
-
-  const [formState, dispatchFormState] = useReducer(formReducer, {
-    inputValues: {
-      email: "",
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: "",
       password: "",
     },
-    inputValidities: {
-      email: false,
-      password: false,
-    },
-    inputIntents: {
-      email: "none",
-      password: "none",
-    },
-    formIsValid: false,
   });
 
-  let validationRules = {
-    email: {
-      required: true,
-      isEmail: true,
-    },
-    password: {
-      required: true,
-      minLength: 6,
-    },
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
-  const lockButton = // useCallback(() =>
-    (
-      <Tooltip content={`${showPassword ? "Hide" : "Show"} Password`}>
-        <Button
-          icon={showPassword ? "unlock" : "lock"}
-          intent={Intent.WARNING}
-          minimal={true}
-          onClick={() => setShowPassword(!showPassword)}
-        />
-      </Tooltip>
-      // ),
-      // [disabled, showPassword]
-    );
-
-  const checkValidity = (value, rules) => {
-    let isValid = true;
-    if (!rules) {
-      return true;
-    }
-
-    if (rules.required) {
-      isValid = value.trim() !== "" && isValid;
-    }
-
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid;
-    }
-
-    if (rules.isEmail) {
-      const pattern =
-        /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-      isValid = pattern.test(value) && isValid;
-    }
-
-    if (rules.isNumeric) {
-      const pattern = /^\d+$/;
-      isValid = pattern.test(value) && isValid;
-    }
-
-    return isValid;
+  const handleMouseUpPassword = (event) => {
+    event.preventDefault();
   };
-
-  const inputChangedHandler = (event, controlName) => {
-    // console.log(event.target.name);
-    // console.log(event.target.value);
-    let isValid = checkValidity(
-      event.target.value,
-      validationRules[controlName]
-    );
-
-    dispatchFormState({
-      type: FORM_INPUT_UPDATE,
-      input: controlName,
-      isValid: isValid,
-      intent: isValid ? "primary" : "danger",
-      value: event.target.value,
-    });
-  };
-
-  const submitHandler = useCallback(
-    (event) => {
-      // console.log(state.controls);
-      event.preventDefault();
-      // console.log(formState);
-      userLogin(formState.inputValues.email, formState.inputValues.password);
-    },
-    [props, formState] //state.controls.email.value, state.controls.password.value]
-  );
-
-  let errorMessage = null;
-  if (props.error) {
-    console.log(props.error);
-    errorMessage = <p style={{ color: "red" }}>{props.error}</p>;
-
-    if (props.errorField) {
-      dispatchFormState({
-        type: FORM_UPDATE_INTENT,
-        input: props.errorField,
-        intent: "danger",
-      });
-    }
-  }
 
   useEffect(() => {
+    console.log("useEffect userToken", userToken);
     if (userToken) {
-      navigate("/optimizer");
+      redirect("/optimizer");
     }
-  }, [userToken, navigate]);
+  }, [userToken, redirect]);
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+    }
+  }, [error]);
 
   const submitForm = (data) => {
-    dispatch(userLogin(data));
+    console.log("submitForm", data);
+    const rv = dispatch(userLogin(data)).then((response) => {
+      console.log("dispatch userLogin response", response);
+      // setCredentials(response);
+      // if (response.payload.token) {
+      //   // console.log("loginSuccess response", response);
+      //   // loginSuccess(response);
+      //   // userToken = response.payload.token;
+      // }
+      // return response;
+    });
+    console.log("submitForm rv", rv);
   };
 
   return (
-    <div className={classes.Auth}>
-      <h3>Aid Optimizer Login</h3>
-      {errorMessage}
+    <Box
+      component="section"
+      sx={{
+        p: 2,
+        alignItems: "center",
+        textAlign: "center",
+        justifyContent: "center",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Typography
+        variant="h6"
+        noWrap
+        component="a"
+        href="#login"
+        sx={{
+          mr: 2,
+          display: { xs: "none", md: "flex" },
+          fontFamily: "monospace",
+          fontWeight: 700,
+          letterSpacing: ".3rem",
+          color: "inherit",
+          textDecoration: "none",
+        }}
+      >
+        Login
+      </Typography>
+
       {isLoading ? (
         <Grid
           visible={true}
@@ -205,57 +122,80 @@ const Auth = (props) => {
           wrapperClass="grid-wrapper"
         />
       ) : (
-        // <form onSubmit={submitHandler}>
         <form onSubmit={handleSubmit(submitForm)}>
-          <InputGroup
-            className={classes.authInput}
-            // disabled={disabled}
-            large={true}
-            placeholder="E-mail address..."
-            type="email"
-            key="email"
-            name="email"
-            intent={formState.inputIntents.email}
-            onChange={(event) => inputChangedHandler(event, "email")}
-            round={true}
-            autoComplete="email"
+          <input
+            type="hidden"
+            name="csrfmiddlewaretoken"
+            value={csrftoken}
+            {...register("csrfmiddlewaretoken")}
           />
-          <InputGroup
-            className={classes.authInput}
-            // disabled={disabled}
-            large={true}
-            placeholder="Enter your password..."
-            rightElement={lockButton}
-            type={showPassword ? "text" : "password"}
-            key="password"
-            name="password"
-            intent={formState.inputIntents.password}
-            onChange={(event) => inputChangedHandler(event, "password")}
-            round={true}
-            autoComplete="current-password"
-          />
-          <Button type="submit">Submit</Button>
+          {error && <Error>{error}</Error>}
+          <Box flex={1} sx={{ display: "flex", flexDirection: "column" }}>
+            <Controller
+              name="username"
+              control={control}
+              render={({ field }) => (
+                <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+                  <InputLabel htmlFor="outlined-username">
+                    E-mail address
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-username"
+                    {...field}
+                    type="email"
+                    name="username"
+                    autoComplete="email"
+                    required
+                    label="E-mail address"
+                  />
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+                  <InputLabel htmlFor="outlined-adornment-password">
+                    Password
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    autoComplete="current-password"
+                    required
+                    label="Password"
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={
+                            showPassword
+                              ? "hide the password"
+                              : "display the password"
+                          }
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          onMouseUp={handleMouseUpPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              )}
+            />
+            <Button type="submit" variant="contained" disabled={isLoading}>
+              {isLoading ? <Spinner /> : "Login"}
+            </Button>
+          </Box>
         </form>
       )}
-    </div>
+    </Box>
   );
 };
-
-// const mapStateToProps = (state) => {
-//   return {
-//     isLoading: state.auth.isLoading,
-//     error: state.auth.error,
-//     errorField: state.auth.errorField,
-//     isAuthenticated: state.auth.token !== null,
-//     authRedirectPath: state.auth.authRedirectPath,
-//   };
-// };
-
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     onAuth: (email, password) => dispatch(actions.auth(email, password)),
-//     onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
-//   };
-// };
 
 export default Auth;

@@ -1,23 +1,11 @@
-import React, { Component } from 'react';
-import { redirect } from 'react-router';
-import { connect } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
-import * as actions from '../../../store/actions/index';
+import { logout } from "../../../features/authSlice";
 
-class Logout extends Component {
-    componentDidMount () {
-        this.props.onLogout();
-    }
-
-    render () {
-        return redirect("/");
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onLogout: () => dispatch(actions.logout())
-    };
+const Logout = () => {
+  const navigate = useNavigate();
+  logout();
+  navigate("/auth");
 };
 
-export default connect(null, mapDispatchToProps)(Logout);
+export default Logout;

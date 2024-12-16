@@ -2,6 +2,8 @@ import React, { Component, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
+
+import { Container, Box } from "@mui/material";
 import styled from "styled-components";
 
 import settings from "../constants/settings";
@@ -21,7 +23,7 @@ const getColor = (props) => {
   return "#eeeeee";
 };
 
-const Container = styled.div`
+const MyContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -38,10 +40,9 @@ const Container = styled.div`
 `;
 
 const MyDropzone = ({ module = "aid" }) => {
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state) => state.auth.userToken);
   const dispatch = useDispatch();
 
-  console.log("Dropzone module", module);
   const postFile = useCallback(
     (data) => {
       const options = {
@@ -102,12 +103,37 @@ const MyDropzone = ({ module = "aid" }) => {
   } = useDropzone({ onDrop });
 
   return (
-    <div className="container">
-      <Container {...getRootProps()}>
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop CSV data files here, or click to select files</p>
-      </Container>
-    </div>
+    <Box>
+      {/* <Box className="container">
+        <MyContainer {...getRootProps()}>
+          <input {...getInputProps()} />
+          <p>Drag and drop CSV data files here, or click to select files</p>
+        </MyContainer>
+      </Box> */}
+      <Box>
+        <Container
+          sx={{
+            alignItems: "center",
+            textAlign: "center",
+            justifyContent: "center",
+            display: "flex",
+            flexDirection: "column",
+            padding: 2,
+            border: 2,
+            borderColor: (props) => getColor(props),
+            borderStyle: "dashed",
+            backgroundColor: "#fafafa",
+            color: "#bdbdbd",
+            transition: "border 0.24s ease-in-out",
+            marginTop: 2,
+          }}
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          <p>Drag and drop CSV data files here, or click to select files</p>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 
@@ -116,7 +142,7 @@ class UploadForm extends Component {
     return (
       <div className="App-container">
         <div className="App-uploadform">
-          <p>
+          {/* <p>
             Choose a CSV file to upload. Please note the uploads must comply
             with a specific format for the predictors to run properly. You may
             use one of the following templates:
@@ -131,7 +157,7 @@ class UploadForm extends Component {
             <li>
               <a href="attrition-template.csv">Attrition Predictor</a>
             </li>
-          </ul>
+          </ul> */}
           <MyDropzone module={this.props.module} />
         </div>
       </div>

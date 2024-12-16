@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import { userLogin } from "./authActions";
 
 // initialize userToken from local storage
@@ -20,6 +21,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      console.log("logout");
       localStorage.removeItem("userToken"); // delete token from storage
       state.isLoading = false;
       state.userInfo = null;
@@ -28,25 +30,54 @@ const authSlice = createSlice({
       state.errorField = null;
     },
     setCredentials: (state, { payload }) => {
+      console.log("setCredentials", payload);
       state.userInfo = payload;
     },
     loginStart: (state) => {
+      console.log("loginStart");
       state.isLoading = true;
       state.error = null;
       state.errorField = null;
     },
     loginSuccess: (state, action) => {
+      console.log("loginSuccess", action);
       state.isLoading = false;
       state.userInfo = action.payload;
-      state.userToken = payload.userToken;
+      // state.userToken = payload.userToken;
       state.error = null;
       state.errorField = null;
+      // localStorage.setItem("userToken", action); // save token to storage
     },
     loginFailure: (state, action) => {
+      console.log("loginFailure", action);
       state.isLoading = false;
       state.userInfo = null;
       state.error = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    // Add extra reducers here
+    builder.addCase(userLogin.pending, (state, action) => {
+      state.loading = true;
+    });
+
+    builder.addCase(userLogin.fulfilled, (state, action) => {
+      console.log("userLogin.fulfilled", action);
+      console.log("userLogin.fulfilled.payload", action.payload);
+      console.log("userLogin.fulfilled.payload.token", action.payload.token);
+      state.isLoading = false;
+      state.userInfo = action.payload;
+      state.userToken = action.payload.token;
+      state.error = null;
+      state.errorField = null;
+    });
+
+    builder.addCase(userLogin.rejected, (state, action) => {
+      console.log("userLogin.rejected", action);
+      state.isLoading = false;
+      state.userInfo = null;
+      state.error = action.payload;
+    });
   },
 });
 

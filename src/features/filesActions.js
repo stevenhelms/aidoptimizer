@@ -8,14 +8,9 @@ import settings from "../constants/settings";
 export const fetchFiles = createAsyncThunk(
   "files/fetchFiles",
   async ({ token, fileType }, { rejectWithValue }) => {
-    // let token = localStorage.getItem("token");
-    // console.log('fetchFiles localstorage token: '+ token);
-    // token = stateToken;
-    // console.log('fetchFiles parameter token: '+ stateToken);
     console.log("fetchFiles fileType", fileType);
 
     const url = settings.api_url + "/files/?module=" + fileType;
-    // console.log("fetchFiles url", url);
     const response = await axios.get(url, {
       method: "GET",
       headers: {
@@ -27,7 +22,7 @@ export const fetchFiles = createAsyncThunk(
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(errorData);
+      console.log("fetchFiles", errorData);
       // throw error
     }
 
