@@ -53,7 +53,6 @@ const Auth = (props) => {
   };
 
   useEffect(() => {
-    console.log("useEffect userToken", userToken);
     if (userToken) {
       redirect("/optimizer");
     }

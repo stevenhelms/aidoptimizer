@@ -4,14 +4,8 @@ import settings from "../../constants/settings";
 export const FETCH_FILES = "FETCH_FILES";
 
 export const fetchFiles = (token, fileType) => {
-  // let token = localStorage.getItem("token");
-  // console.log('fetchFiles localstorage token: '+ token);
-  // token = stateToken;
-  // console.log('fetchFiles parameter token: '+ stateToken);
-
   return async (dispatch, getState) => {
     const url = settings.api_url + "/files/?module=" + fileType;
-    // console.log("fetchFiles url", url);
     const response = await fetch(url, {
       method: "GET",
       headers: {

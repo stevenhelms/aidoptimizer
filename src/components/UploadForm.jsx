@@ -7,7 +7,6 @@ import { Container, Box } from "@mui/material";
 import styled from "styled-components";
 
 import settings from "../constants/settings";
-import * as fileActions from "../store/actions/files";
 import { fetchFiles } from "../features/filesActions";
 
 const getColor = (props) => {
@@ -58,7 +57,7 @@ const MyDropzone = ({ module = "aid" }) => {
       axios
         .post(settings.api_url + "/upload/?module=" + module, data, options)
         .then(async () => {
-          await dispatch(fetchFiles(token, module));
+          dispatch(fetchFiles({ token: token, fileType: module }));
         })
         .catch(function (error) {
           console.log(error);
@@ -104,12 +103,6 @@ const MyDropzone = ({ module = "aid" }) => {
 
   return (
     <Box>
-      {/* <Box className="container">
-        <MyContainer {...getRootProps()}>
-          <input {...getInputProps()} />
-          <p>Drag and drop CSV data files here, or click to select files</p>
-        </MyContainer>
-      </Box> */}
       <Box>
         <Container
           sx={{
@@ -142,22 +135,6 @@ class UploadForm extends Component {
     return (
       <div className="App-container">
         <div className="App-uploadform">
-          {/* <p>
-            Choose a CSV file to upload. Please note the uploads must comply
-            with a specific format for the predictors to run properly. You may
-            use one of the following templates:
-          </p>
-          <ul>
-            <li>
-              <a href="aid-template.csv">Aid Optimizer</a>
-            </li>
-            <li>
-              <a href="default-template.csv">Default Predictor</a>
-            </li>
-            <li>
-              <a href="attrition-template.csv">Attrition Predictor</a>
-            </li>
-          </ul> */}
           <MyDropzone module={this.props.module} />
         </div>
       </div>

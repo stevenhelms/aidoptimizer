@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { connect } from "react-redux";
 import { Grid } from "react-loader-spinner";
 import { AnchorButton } from "@blueprintjs/core";
 
@@ -10,8 +9,10 @@ import * as predictionActions from "../store/actions/predictions";
 import { IS_REPORTING, IS_LOADING } from "../store/actions/runtime";
 import ReportModal from "./ReportModal";
 import settings from "../constants/settings";
+import { fetchFiles } from "../features/filesActions";
 
 const File = (props) => {
+  const userToken = useSelector((state) => state.auth.userToken);
   const dispatch = useDispatch();
 
   const getPrediction = async (id) => {
@@ -19,11 +20,11 @@ const File = (props) => {
     dispatch({ type: IS_LOADING, isLoading: true });
 
     try {
-      await dispatch(predictionActions.predict(id, props.token));
+      dispatch(predictionActions.predict(id, userToken));
       dispatch({ type: IS_LOADING, isLoading: false });
       // Open Modal with Results
       dispatch({ type: IS_REPORTING, reporting: true });
-      await dispatch(fileActions.fetchFiles(props.token, props.module));
+      dispatch(fetchFiles({ token: userToken, fileType: props.module }));
     } catch (err) {
       // Throw err
     }
@@ -90,25 +91,32 @@ const FileList = (props) => {
 
 const Report = (props) => {
   const isLoading = useSelector((state) => state.runtime.isLoading);
-  const reportType = props.module ? props.module : "aid";
-
+  const userToken = useSelector((state) => state.auth.userToken);
   const files = useSelector((state) => state.files.allFiles);
+  const reportType = props.module ? props.module : "aid";
+  // console.log("reportType", reportType);
+  // console.log("userToken", userToken);
+  // console.log("files", files);
 
   const dispatch = useDispatch();
 
   const loadFiles = useCallback(async () => {
-    dispatch({ type: IS_LOADING, loading: true });
+    // dispatch({ type: IS_LOADING, loading: true });
     try {
-      await dispatch(fileActions.fetchFiles(props.token, reportType));
-      dispatch({ type: IS_LOADING, loading: false });
+      dispatch(fetchFiles({ token: userToken, fileType: reportType })).then(
+        (response) => {
+          console.log("report fetchFiles response", response);
+        }
+      );
+      // dispatch({ type: IS_LOADING, loading: false });
     } catch (err) {
       // Throw an error
     }
-  }, [dispatch, props.token, reportType]);
+  }, [dispatch, userToken, reportType]);
 
   useEffect(() => {
     loadFiles();
-  }, [dispatch, loadFiles]);
+  }, [loadFiles, isLoading, userToken]);
 
   return (
     <div className={styles.container}>
@@ -132,11 +140,7 @@ const Report = (props) => {
             </div>
           ) : (
             <div className={styles.reportInner}>
-              <FileList
-                files={files}
-                token={props.token}
-                module={props.module}
-              />
+              <FileList files={files} token={userToken} module={reportType} />
               <ReportModal />
             </div>
           )}
@@ -146,12 +150,5 @@ const Report = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    isAuthenticated: state.auth.token !== null,
-    token: state.auth.token,
-  };
-};
-
 // export default Report;
-export default connect(mapStateToProps)(Report);
+export default Report;

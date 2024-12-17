@@ -43,10 +43,10 @@ const authSlice = createSlice({
       console.log("loginSuccess", action);
       state.isLoading = false;
       state.userInfo = action.payload;
-      // state.userToken = payload.userToken;
+      state.userToken = payload.userToken;
       state.error = null;
       state.errorField = null;
-      // localStorage.setItem("userToken", action); // save token to storage
+      localStorage.setItem("userToken", payload.userToken); // save token to storage
     },
     loginFailure: (state, action) => {
       console.log("loginFailure", action);
@@ -62,9 +62,9 @@ const authSlice = createSlice({
     });
 
     builder.addCase(userLogin.fulfilled, (state, action) => {
-      console.log("userLogin.fulfilled", action);
-      console.log("userLogin.fulfilled.payload", action.payload);
-      console.log("userLogin.fulfilled.payload.token", action.payload.token);
+      // console.log("userLogin.fulfilled", action);
+      // console.log("userLogin.fulfilled.payload", action.payload);
+      // console.log("userLogin.fulfilled.payload.token", action.payload.token);
       state.isLoading = false;
       state.userInfo = action.payload;
       state.userToken = action.payload.token;

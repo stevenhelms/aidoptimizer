@@ -50,16 +50,13 @@ const Header = () => {
 
   useEffect(() => {
     if (userToken !== null) {
-      console.log("Header useEffect", userToken);
       navigate("/optimizer");
-      console.log("Header useEffect finished redirect");
     }
   }, [userToken]);
 
   useEffect(() => {
     if (data) {
       dispatch(setCredentials(data));
-      console.log("Header useEffect", data);
     }
   }, [data, dispatch]);
 
