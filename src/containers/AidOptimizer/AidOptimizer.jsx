@@ -64,6 +64,13 @@ const AidOptimizer = (props) => {
   return (
     <Box sx={{ flexGrow: 1, mt: 2, mb: 2, mx: "auto", maxWidth: "80%" }}>
       <Box>
+        Uploads for financial aid prediction must be in CSV format. Please
+        download the template below to ensure your data is in the correct
+        format. <a href="">[INSERT NEW TEMPLATE] Download Template</a>
+      </Box>
+      <UploadForm module="aid2024" />
+      <Report token={userToken} module="aid2024" />
+      {/* <Box>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -74,8 +81,8 @@ const AidOptimizer = (props) => {
           <Tab label="Attrition" {...a11yProps(2)} />
           <Tab label="Financial Default" {...a11yProps(3)} />
         </Tabs>
-      </Box>
-      <UploadTabPanel value={value} index={0}>
+      </Box> */}
+      {/* <UploadTabPanel value={value} index={0}>
         <Box>
           Uploads for financial aid prediction must be in CSV format. Please
           download the template below to ensure your data is in the correct
@@ -105,7 +112,7 @@ const AidOptimizer = (props) => {
         </Box>
         <UploadForm module="fincdefault" />
         <Report token={userToken} module="fincdefault" />
-      </UploadTabPanel>
+      </UploadTabPanel> */}
     </Box>
   );
 };
