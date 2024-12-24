@@ -64,9 +64,12 @@ const AidOptimizer = (props) => {
   return (
     <Box sx={{ flexGrow: 1, mt: 2, mb: 2, mx: "auto", maxWidth: "80%" }}>
       <Box>
-        Uploads for financial aid prediction must be in CSV format. Please
-        download the template below to ensure your data is in the correct
-        format. <a href="/aid2024-template.csv">Download Template</a>
+        Uploads for financial aid prediction must be in specific CSV format.
+        Please
+        <a href="/aid2024-template.csv">download the CSV template</a> to ensure
+        your data is in the correct format. Additionally, you can download the{" "}
+        <a href="/aid2024-dictionary.csv">data dictionary</a> describing each of
+        the columns and their formats.
       </Box>
       <UploadForm module="aid2024" />
       <Report token={userToken} module="aid2024" />
