@@ -66,7 +66,7 @@ const AidOptimizer = (props) => {
       <Box>
         Uploads for financial aid prediction must be in CSV format. Please
         download the template below to ensure your data is in the correct
-        format. <a href="">[INSERT NEW TEMPLATE] Download Template</a>
+        format. <a href="/aid2024-template.csv">Download Template</a>
       </Box>
       <UploadForm module="aid2024" />
       <Report token={userToken} module="aid2024" />
