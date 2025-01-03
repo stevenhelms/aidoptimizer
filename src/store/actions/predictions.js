@@ -28,10 +28,10 @@ export const predict = (id, token) => {
 
     for (const key in responseData["data"]) {
       loadedPreds.push(
-        new Prediction(
-          responseData["data"][key].id,
-          responseData["data"][key].score
-        )
+        JSON.stringify({
+          id: responseData["data"][key].id,
+          score: responseData["data"][key].score,
+        })
       );
     }
     console.log(loadedPreds);

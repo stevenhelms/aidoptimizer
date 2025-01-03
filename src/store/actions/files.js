@@ -26,17 +26,17 @@ export const fetchFiles = (token, fileType) => {
     const loadedFiles = [];
 
     for (const key in responseData) {
+      const fileData = {
+        file: responseData[key].file,
+        name: responseData[key].name,
+        size: responseData[key].size,
+        content_type: responseData[key].content_type,
+        prediction_file: responseData[key].prediction_file,
+        message: responseData[key].message ? responseData[key].message : null,
+        created_at: responseData[key].created_at,
+      };
       loadedFiles.push(
-        new File(
-          responseData[key].id,
-          responseData[key].user,
-          responseData[key].file,
-          responseData[key].name,
-          responseData[key].size,
-          responseData[key].content_type,
-          responseData[key].prediction_file,
-          responseData[key].created_at
-        )
+        new File(responseData[key].id, responseData[key].user, fileData)
       );
     }
 

@@ -72,8 +72,8 @@
 .file {
   margin-bottom: 10px;
   padding: 10px;
-  border: 1px solid #bdbdbd;
-  background-color: #eee;
+  border-bottom: 1px solid #eee;
+  /* background-color: #eee; */
   text-align: left;
   width: 100%;
   /* display: block; */
@@ -89,7 +89,6 @@
   color: #333333;
   margin-left: 10px;
   padding: 10px;
-  
 }
 .fileClick {
   cursor: pointer;

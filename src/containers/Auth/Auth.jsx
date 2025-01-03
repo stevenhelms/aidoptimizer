@@ -22,6 +22,14 @@ import { Grid } from "react-loader-spinner";
 import { userLogin } from "../../features/authActions";
 import { loginSuccess, setCredentials } from "../../features/authSlice";
 
+const gridLoadingStyle = {
+  display: "flex",
+  textAlign: "center",
+  justifyContent: "center",
+  alignItems: "center",
+  flexDirection: "column",
+};
+
 const Auth = (props) => {
   const { isLoading, userToken, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
@@ -117,7 +125,7 @@ const Auth = (props) => {
           color="#666666"
           ariaLabel="grid-loading"
           radius="12.5"
-          wrapperStyle={{}}
+          wrapperStyle={gridLoadingStyle}
           wrapperClass="grid-wrapper"
         />
       ) : (

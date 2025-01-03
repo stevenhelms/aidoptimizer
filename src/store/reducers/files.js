@@ -1,7 +1,10 @@
 import { FETCH_FILES } from "../actions/files";
 
 const initialState = {
+  isLoading: false,
+  error: null,
   allFiles: [],
+  filePredictions: [],
 };
 
 export const reducer = (state = initialState, action) => {

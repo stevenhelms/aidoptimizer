@@ -1,41 +1,45 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Modal from "react-modal";
-import {
-  AnchorButton,
-  Button,
-  Classes,
-  Dialog,
-  Intent,
-} from "@blueprintjs/core";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+
+// import Modal from "react-modal";
+// import {
+//   AnchorButton,
+//   Button,
+//   Classes,
+//   Dialog,
+//   Intent,
+// } from "@blueprintjs/core";
 
 import settings from "../constants/settings";
 import { IS_REPORTING } from "../store/actions/runtime";
 
-Modal.setAppElement(document.getElementById("root"));
+// Modal.setAppElement(document.getElementById("root"));
 
-const ReportList = (props) => {
-  const predictions = useSelector((state) => state.predictions.predictions);
-  // console.log(predictions);
-
-  const reportItems = predictions.map((pred, idx) => {
-    // console.log(pred);
-    return (
-      <li key={idx}>
-        <div className="report">
-          <span style={{ flex: 2 }}>Applicant ID: {pred.id}</span>
-          <span style={{ flex: 1, marginLeft: 20 }}>Score: {pred.score}</span>
-        </div>
-      </li>
-    );
-  });
-
-  return <ul className="reportlist">{reportItems}</ul>;
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
 };
 
-const ReportModal = (props) => {
+const ReportModal = ({ id }) => {
   const reporting = useSelector((state) => state.runtime.reporting);
   const filename = useSelector((state) => state.predictions.file);
+  const predictions = useSelector((state) => state.predictions.predictions);
 
   const dispatch = useDispatch();
 
@@ -43,48 +47,34 @@ const ReportModal = (props) => {
     dispatch({ type: IS_REPORTING, reporting: false });
   };
 
-  const customStyles = {
-    content: {
-      top: "10%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -10%)",
-      width: "60%",
-    },
-  };
-
   return (
-    <Dialog
-      isOpen={reporting}
+    <Modal
+      open={reporting}
       onClose={closeModal}
-      style={customStyles}
-      title="Aid Optimization Report"
-      icon="info-sign"
+      aria-labelledby="Aid Optimization Report"
+      aria-describedby="Report Item"
     >
-      {/* <h2>
-        Aid Optimization Report
-      </h2> */}
-      {/* <div>Generated from: {fileinfo.name} on {fileinfo.date}</div> */}
-      <div className={Classes.DIALOG_BODY}>
-        <ReportList />
-      </div>
-      <div className={Classes.DIALOG_FOOTER}>
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          <AnchorButton
-            intent={Intent.PRIMARY}
-            // href={settings.media_url + filename}
-            href={settings.api_url + "/media/" + filename}
-            target="_blank"
-          >
-            Download
-          </AnchorButton>
-          <Button onClick={closeModal} text="Close" rightIcon="cross" />
-        </div>
-      </div>
-    </Dialog>
+      <Box sx={modalStyle}>
+        <Typography id="Aid Optimization Report" variant="h6" component="h2">
+          Results
+        </Typography>
+
+        <List className="reportlist" id={"list" + id}>
+          {predictions.map((pred) => (
+            <ListItem key={pred.id}>
+              <div className="report">
+                <span style={{ flex: 2 }}>Applicant ID: {pred.id}</span>
+                <span style={{ flex: 1, marginLeft: 20 }}>
+                  Score: {pred.score}
+                </span>
+              </div>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Modal>
   );
+  
 };
 
 export default ReportModal;

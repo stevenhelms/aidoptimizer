@@ -22,7 +22,7 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       console.log("logout");
-      localStorage.removeItem("userToken"); // delete token from storage
+      // localStorage.removeItem("userToken"); // delete token from storage
       state.isLoading = false;
       state.userInfo = null;
       state.userToken = null;
@@ -65,6 +65,7 @@ const authSlice = createSlice({
       // console.log("userLogin.fulfilled", action);
       // console.log("userLogin.fulfilled.payload", action.payload);
       // console.log("userLogin.fulfilled.payload.token", action.payload.token);
+      localStorage.setItem("userToken", action.payload.token); // save token to storage
       state.isLoading = false;
       state.userInfo = action.payload;
       state.userToken = action.payload.token;
