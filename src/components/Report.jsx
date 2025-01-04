@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo, use } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -13,33 +13,17 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DescriptionIcon from "@mui/icons-material/Description";
 import CloseIcon from "@mui/icons-material/Close";
-import { Grid } from "react-loader-spinner";
+import { Grid as GridSpinner } from "react-loader-spinner";
 
 import styles from "./Report.module.css";
-import * as predictionActions from "../store/actions/predictions";
 import * as runtime from "../features/runtimeSlice";
 import settings from "../constants/settings";
-import { fetchFiles } from "../features/filesActions";
-import store from "../app/store";
-
-const modalStyle = {
-  // position: "absolute",
-  // top: "50%",
-  // left: "50%",
-  // transform: "translate(-50%, -50%)",
-  // width: 400,
-  // fullScreen: true,
-  // bgcolor: "background.paper",
-  // border: "2px solid #000",
-  // boxShadow: 24,
-  // p: 1,
-  // display: "block",
-  alignItems: "center",
-  justifyContent: "center",
-};
+import { fetchFiles, fetchPredictions } from "../features/filesActions";
 
 const gridLoadingStyle = {
   display: "flex",
@@ -49,31 +33,44 @@ const gridLoadingStyle = {
   flexDirection: "column",
 };
 
-const ReportDialog = ({ id, token, open, handleClose, file_name }) => {
-  const filePredictions = useSelector((state) => state.files.filePredictions);
-  const dispatch = useDispatch();
+const columns = [
+  { field: "id", headerName: "ID", width: 250 },
+  {
+    field: "score",
+    headerName: "Score",
+    width: 250,
+  },
+];
 
-  useEffect(() => {
-    if (open && id) {
-      dispatch(filesActions.fetchPredictions({ id, token }));
-      console.log("fetchPredictions called", id);
-    }
-  }, [open, id, token, dispatch]);
+const ReportDialog = ({ token, open, handleClose }) => {
+  const allFiles = useSelector((state) => state.files.allFiles);
+  const filePredictions = useSelector((state) => state.files.filePredictions);
+  const workingFile = useSelector((state) => state.runtime.workingFile);
 
   const filePredictions_list = useMemo(() => {
     return filePredictions.map((file_blob) => JSON.parse(file_blob));
   }, [filePredictions]);
 
+  const workingFileData = useMemo(() => {
+    const fileData = allFiles.find(
+      (file) => JSON.parse(file).id === workingFile
+    );
+    return JSON.parse(
+      fileData ? fileData : JSON.stringify({ name: "Unknown" })
+    );
+  }, [allFiles, workingFile]);
+
   return (
     <Dialog
-      id={"modal" + id}
+      id="dialog-modal"
       open={open}
       onClose={handleClose}
       aria-labelledby="dialog-title"
-      sx={modalStyle}
+      aria-describedby="dialog-description"
+      fullWidth={true}
     >
       <DialogTitle sx={{ m: 0, p: 2 }} id="dialog-title">
-        Prediction Results
+        Prediction Results ({workingFileData.name})
       </DialogTitle>
       <IconButton
         aria-label="close"
@@ -89,25 +86,39 @@ const ReportDialog = ({ id, token, open, handleClose, file_name }) => {
       </IconButton>
 
       <DialogContent>
-        <Typography>Predictions ready!</Typography>
-        <List className="reportlist">
+        <DataGrid
+          rows={filePredictions_list}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+          }}
+          pageSizeOptions={[5]}
+          // checkboxSelection
+          disableRowSelectionOnClick
+        />
+        {/* <List className="reportlist">
           {filePredictions_list.map((fp) => (
             <ListItem key={fp.id}>
               <div className="report">
-                <span style={{ flex: 2 }}>Applicant ID: {fp.id}</span>
+                <span style={{ flex: 2 }}>
+                  <b>ID:</b> {fp.id}
+                </span>
                 <span style={{ flex: 2, marginLeft: 5 }}>
-                  Score: {fp.score}
+                  <b>Score:</b> {fp.score}
                 </span>
               </div>
             </ListItem>
           ))}
-        </List>
+        </List> */}
       </DialogContent>
     </Dialog>
   );
 };
 ReportDialog.propTypes = {
-  id: PropTypes.number,
   token: PropTypes.string,
   open: PropTypes.bool,
   handleClose: PropTypes.func,
@@ -129,13 +140,13 @@ const MyFileIcon = ({ id, fileName, download, onClick }) => {
 
   if (!download) {
     return (
-      <IconButton sx={{ color: "primary.dark" }} onClick={onClick}>
+      <IconButton sx={{ color: "primary.main" }} onClick={onClick}>
         {download ? <FileDownloadIcon /> : <DescriptionIcon />}
       </IconButton>
     );
   }
   return (
-    <IconButton href={url} target="_blank" sx={{ color: "primary.dark" }}>
+    <IconButton href={url} target="_blank" sx={{ color: "primary.main" }}>
       {download ? <FileDownloadIcon /> : <DescriptionIcon />}
     </IconButton>
   );
@@ -150,9 +161,13 @@ MyFileIcon.propTypes = {
 const File = (props) => {
   const dispatch = useDispatch();
 
-  const handleClickOpen = (id) => {
-    console.log("File handleClickOpen");
-    store.dispatch(runtime.setIsReporting(true));
+  const handleClickOpen = (id, token) => {
+    console.log("File handleClickOpen", id);
+    dispatch(runtime.setIsReporting(true));
+    dispatch(runtime.setWorkingFile(id));
+    dispatch(fetchPredictions({ id, token })).then((response) => {
+      console.log("fetchPredictions response", response);
+    });
   };
 
   return (
@@ -162,17 +177,17 @@ const File = (props) => {
         {new Date(props.createdAt).toLocaleString()}
       </Typography>
       <Typography sx={{ flex: 1 }}>{props.size} bytes</Typography>
-      {props.predictions ? (
+      {props.predictionFile ? (
         <ListItemIcon sx={{ flex: 1, flexGrow: 3, marginLeft: "auto" }}>
           <MyFileIcon
             id={props.fileid}
-            fileName={props.predictions}
+            fileName={props.predictionFile}
             download={false}
-            onClick={() => handleClickOpen(props.fileid)}
+            onClick={() => handleClickOpen(props.fileid, props.token)}
           />
           <MyFileIcon
             id={props.fileid}
-            fileName={props.predictions}
+            fileName={props.predictionFile}
             download={true}
           />
         </ListItemIcon>
@@ -182,7 +197,7 @@ const File = (props) => {
           {props.message}
         </Typography>
       ) : null}
-      {!props.message && !props.predictions ? (
+      {!props.message && !props.predictionFile ? (
         <Box sx={{ flex: 1, flexGrow: 3 }}></Box>
       ) : null}
     </>
@@ -193,7 +208,7 @@ File.propTypes = {
   size: PropTypes.number,
   createdAt: PropTypes.string,
   fileid: PropTypes.number,
-  predictions: PropTypes.string,
+  predictionFile: PropTypes.string,
   message: PropTypes.string,
   token: PropTypes.string,
 };
@@ -202,7 +217,10 @@ const FileLoading = ({ loading, len }) => {
   if (!loading && len === 0) {
     return (
       <Box sx={gridLoadingStyle}>
-        <Typography variant="h5" sx={{ display: "block", color: "#999" }}>
+        <Typography
+          variant="h5"
+          sx={{ display: "block", color: "primary.main" }}
+        >
           No files uploaded.
         </Typography>
       </Box>
@@ -211,10 +229,14 @@ const FileLoading = ({ loading, len }) => {
 
   return (
     <Box sx={gridLoadingStyle}>
-      <Typography variant="h5" gutterBottom sx={{ display: "block" }}>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{ display: "block", color: "primary.main" }}
+      >
         Loading...
       </Typography>
-      <Grid
+      <GridSpinner
         visible={true}
         height="50"
         width="50"
@@ -233,20 +255,6 @@ FileLoading.propTypes = {
 
 const FileList = ({ files, token, open, module }) => {
   const isLoading = useSelector((state) => state.runtime.isLoading);
-
-  const dispatch = useDispatch();
-
-  const getPrediction = (id) => {
-    console.log("clicked " + id);
-
-    try {
-      dispatch(predictionActions.predict(id, token));
-      // Open Modal with Results
-      dispatch(fetchFiles({ token: token, fileType: props.module }));
-    } catch (err) {
-      // Throw err
-    }
-  };
 
   const files_list = useMemo(() => {
     return files.map((file_blob) => JSON.parse(file_blob));
@@ -273,16 +281,11 @@ const FileList = ({ files, token, open, module }) => {
               message={file.message}
               createdAt={file.created_at}
               fileid={file.id}
-              predictions={file.prediction_file}
+              predictionFile={file.prediction_file}
               token={token}
               module={module}
               open={open}
             />
-            {0 && file?.message ? (
-              <Typography style={{ flex: 1, flexGrow: 3, color: "red" }}>
-                {file.message}
-              </Typography>
-            ) : null}
           </ListItem>
         ))
       )}
@@ -301,23 +304,21 @@ const Report = (props) => {
   const userToken = useSelector((state) => state.auth.userToken);
   const files = useSelector((state) => state.files.allFiles);
   const reporting = useSelector((state) => state.runtime.reporting);
-  const [modalContents, setModalContents] = React.useState(null);
-
   const reportType = props.module ? props.module : "aid";
   const dispatch = useDispatch();
 
   const handleClose = () => {
     console.log("Report handleClose");
-    store.dispatch(runtime.setIsReporting(false));
+    dispatch(runtime.setIsReporting(false));
   };
 
   const loadFiles = useCallback(async () => {
-    runtime.setIsLoading(true);
+    dispatch(runtime.setIsLoading(true));
     try {
       dispatch(fetchFiles({ token: userToken, fileType: reportType })).then(
         (response) => {
           console.log("report fetchFiles response", response);
-          runtime.setIsLoading(false);
+          dispatch(runtime.setIsLoading(false));
         }
       );
     } catch (err) {
@@ -327,7 +328,7 @@ const Report = (props) => {
 
   useEffect(() => {
     loadFiles();
-  }, [loadFiles, isLoading, userToken]);
+  }, [loadFiles, userToken]);
 
   return (
     <Box className={styles.container}>
@@ -338,18 +339,18 @@ const Report = (props) => {
         <div className={styles.reportContainer}>
           {isLoading ? (
             <div className={styles.reportLoader}>
-              <Grid
+              <GridSpinner
                 visible={true}
                 height="50"
                 width="50"
-                color="#333333"
+                color="primary.main"
                 ariaLabel="grid-loading"
                 radius="12.5"
                 wrapperStyle={gridLoadingStyle}
                 wrapperClass="grid-wrapper"
               />
               <Typography variant="h5" gutterBottom sx={{ display: "block" }}>
-                Predicting Results...
+                Loading Files...
               </Typography>
             </div>
           ) : (
