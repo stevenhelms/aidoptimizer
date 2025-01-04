@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 
-import { logout } from "../../../features/authSlice";
+import * as auth from "../../../features/authSlice";
 
 const Logout = () => {
   const navigate = useNavigate();
-  logout();
+  auth.logout();
   navigate("/auth");
 };
 

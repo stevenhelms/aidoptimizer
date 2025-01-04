@@ -1,12 +1,6 @@
 import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import {
-  loginSuccess,
-  loginFailure,
-  loginStart,
-  setCredentials,
-} from "./authSlice";
 import settings from "../constants/settings";
 
 const backendURL = settings.api_url;

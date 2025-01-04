@@ -21,8 +21,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      console.log("logout");
-      // localStorage.removeItem("userToken"); // delete token from storage
+      localStorage.removeItem("userToken"); // delete token from storage
       state.isLoading = false;
       state.userInfo = null;
       state.userToken = null;
@@ -32,39 +31,20 @@ const authSlice = createSlice({
     setCredentials: (state, { payload }) => {
       console.log("setCredentials", payload);
       state.userInfo = payload;
+      state.userToken = payload.token;
+      localStorage.setItem("userToken", payload.token); // save token to storage
     },
-    loginStart: (state) => {
-      console.log("loginStart");
-      state.isLoading = true;
-      state.error = null;
-      state.errorField = null;
-    },
-    loginSuccess: (state, action) => {
-      console.log("loginSuccess", action);
-      state.isLoading = false;
-      state.userInfo = action.payload;
-      state.userToken = payload.userToken;
-      state.error = null;
-      state.errorField = null;
-      localStorage.setItem("userToken", payload.userToken); // save token to storage
-    },
-    loginFailure: (state, action) => {
-      console.log("loginFailure", action);
-      state.isLoading = false;
-      state.userInfo = null;
-      state.error = action.payload;
+    setAuthIsLoading: (state, { payload }) => {
+      state.isLoading = payload;
     },
   },
   extraReducers: (builder) => {
     // Add extra reducers here
     builder.addCase(userLogin.pending, (state, action) => {
-      state.loading = true;
+      state.isLoading = true;
     });
 
     builder.addCase(userLogin.fulfilled, (state, action) => {
-      // console.log("userLogin.fulfilled", action);
-      // console.log("userLogin.fulfilled.payload", action.payload);
-      // console.log("userLogin.fulfilled.payload.token", action.payload.token);
       localStorage.setItem("userToken", action.payload.token); // save token to storage
       state.isLoading = false;
       state.userInfo = action.payload;
@@ -82,12 +62,5 @@ const authSlice = createSlice({
   },
 });
 
-export const {
-  logout,
-  setCredentials,
-  loginStart,
-  loginSuccess,
-  loginFailure,
-} = authSlice.actions;
-
+export const { logout, setCredentials, setAuthIsLoading } = authSlice.actions;
 export default authSlice.reducer;

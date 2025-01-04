@@ -19,8 +19,9 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { Grid } from "react-loader-spinner";
 
+import * as runtime from "../../features/runtimeSlice";
+import * as authentication from "../../features/authSlice";
 import { userLogin } from "../../features/authActions";
-import { loginSuccess, setCredentials } from "../../features/authSlice";
 
 const gridLoadingStyle = {
   display: "flex",
@@ -73,18 +74,12 @@ const Auth = (props) => {
   }, [error]);
 
   const submitForm = (data) => {
+    authentication.setAuthIsLoading(true);
     console.log("submitForm", data);
     const rv = dispatch(userLogin(data)).then((response) => {
       console.log("dispatch userLogin response", response);
-      // setCredentials(response);
-      // if (response.payload.token) {
-      //   // console.log("loginSuccess response", response);
-      //   // loginSuccess(response);
-      //   // userToken = response.payload.token;
-      // }
-      // return response;
+      authentication.setAuthIsLoading(false);
     });
-    console.log("submitForm rv", rv);
   };
 
   return (
@@ -117,90 +112,77 @@ const Auth = (props) => {
         Login
       </Typography>
 
-      {isLoading ? (
-        <Grid
-          visible={true}
-          height="100"
-          width="100"
-          color="#666666"
-          ariaLabel="grid-loading"
-          radius="12.5"
-          wrapperStyle={gridLoadingStyle}
-          wrapperClass="grid-wrapper"
+      <form onSubmit={handleSubmit(submitForm)}>
+        <input
+          type="hidden"
+          name="csrfmiddlewaretoken"
+          value={csrftoken}
+          {...register("csrfmiddlewaretoken")}
         />
-      ) : (
-        <form onSubmit={handleSubmit(submitForm)}>
-          <input
-            type="hidden"
-            name="csrfmiddlewaretoken"
-            value={csrftoken}
-            {...register("csrfmiddlewaretoken")}
+        {error && <Error>{error}</Error>}
+        <Box flex={1} sx={{ display: "flex", flexDirection: "column" }}>
+          <Controller
+            name="username"
+            control={control}
+            render={({ field }) => (
+              <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+                <InputLabel htmlFor="outlined-username">
+                  E-mail address
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-username"
+                  {...field}
+                  type="email"
+                  name="username"
+                  autoComplete="email"
+                  required
+                  label="E-mail address"
+                />
+              </FormControl>
+            )}
           />
-          {error && <Error>{error}</Error>}
-          <Box flex={1} sx={{ display: "flex", flexDirection: "column" }}>
-            <Controller
-              name="username"
-              control={control}
-              render={({ field }) => (
-                <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-                  <InputLabel htmlFor="outlined-username">
-                    E-mail address
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-username"
-                    {...field}
-                    type="email"
-                    name="username"
-                    autoComplete="email"
-                    required
-                    label="E-mail address"
-                  />
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="password"
-              control={control}
-              render={({ field }) => (
-                <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">
-                    Password
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-password"
-                    {...field}
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    autoComplete="current-password"
-                    required
-                    label="Password"
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label={
-                            showPassword
-                              ? "hide the password"
-                              : "display the password"
-                          }
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          onMouseUp={handleMouseUpPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              )}
-            />
-            <Button type="submit" variant="contained" disabled={isLoading}>
-              {isLoading ? <Spinner /> : "Login"}
-            </Button>
-          </Box>
-        </form>
-      )}
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  {...field}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="current-password"
+                  required
+                  label="Password"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={
+                          showPassword
+                            ? "hide the password"
+                            : "display the password"
+                        }
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        onMouseUp={handleMouseUpPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            )}
+          />
+          <Button type="submit" variant="contained" disabled={isLoading}>
+            {isLoading ? "Please wait..." : "Login"}
+          </Button>
+        </Box>
+      </form>
     </Box>
   );
 };
