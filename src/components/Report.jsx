@@ -9,7 +9,6 @@ import {
   DialogTitle,
   List,
   ListItem,
-  ListItemButton,
   ListItemIcon,
   IconButton,
   Typography,
@@ -21,45 +20,18 @@ import { Grid } from "react-loader-spinner";
 
 import styles from "./Report.module.css";
 import * as predictionActions from "../store/actions/predictions";
-import * as filesActions from "../features/filesActions";
-import { IS_REPORTING, IS_LOADING } from "../store/actions/runtime";
+import * as runtime from "../features/runtimeSlice";
 import settings from "../constants/settings";
 import { fetchFiles } from "../features/filesActions";
-
-import { createTheme } from "@mui/material/styles";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#FF5733",
-      // light: will be calculated from palette.primary.main,
-      // dark: will be calculated from palette.primary.main,
-      // contrastText: will be calculated to contrast with palette.primary.main
-    },
-    secondary: {
-      main: "#E0C2FF",
-      light: "#F5EBFF",
-      // dark: will be calculated from palette.secondary.main,
-      contrastText: "#47008F",
-    },
-  },
-});
-// const useStyles = makeStyles((theme) => ({
-//   evenItem: {
-//     backgroundColor: "#c6b7ed",
-//   },
-//   oddItem: {
-//     backgroundColor: "#d1a2d1",
-//   },
-// }));
+import store from "../app/store";
 
 const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  // position: "absolute",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
   // width: 400,
-  fullScreen: true,
+  // fullScreen: true,
   // bgcolor: "background.paper",
   // border: "2px solid #000",
   // boxShadow: 24,
@@ -81,16 +53,16 @@ const ReportDialog = ({ id, token, open, handleClose, file_name }) => {
   const filePredictions = useSelector((state) => state.files.filePredictions);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (open && id) {
-  //     dispatch(filesActions.fetchPredictions({ id, token }));
-  //     console.log("fetchPredictions called", id);
-  //   }
-  // }, [open, id, token, dispatch]);
+  useEffect(() => {
+    if (open && id) {
+      dispatch(filesActions.fetchPredictions({ id, token }));
+      console.log("fetchPredictions called", id);
+    }
+  }, [open, id, token, dispatch]);
 
-  // const filePredictions_list = useMemo(() => {
-  //   return filePredictions.map((file_blob) => JSON.parse(file_blob));
-  // }, [filePredictions]);
+  const filePredictions_list = useMemo(() => {
+    return filePredictions.map((file_blob) => JSON.parse(file_blob));
+  }, [filePredictions]);
 
   return (
     <Dialog
@@ -98,7 +70,7 @@ const ReportDialog = ({ id, token, open, handleClose, file_name }) => {
       open={open}
       onClose={handleClose}
       aria-labelledby="dialog-title"
-      // sx={modalStyle}
+      sx={modalStyle}
     >
       <DialogTitle sx={{ m: 0, p: 2 }} id="dialog-title">
         Prediction Results
@@ -118,7 +90,7 @@ const ReportDialog = ({ id, token, open, handleClose, file_name }) => {
 
       <DialogContent>
         <Typography>Predictions ready!</Typography>
-        {/* <List className="reportlist">
+        <List className="reportlist">
           {filePredictions_list.map((fp) => (
             <ListItem key={fp.id}>
               <div className="report">
@@ -129,7 +101,7 @@ const ReportDialog = ({ id, token, open, handleClose, file_name }) => {
               </div>
             </ListItem>
           ))}
-        </List> */}
+        </List>
       </DialogContent>
     </Dialog>
   );
@@ -141,9 +113,8 @@ ReportDialog.propTypes = {
   handleClose: PropTypes.func,
 };
 
-const MyFileIcon = ({ id, fileName, download }) => {
+const MyFileIcon = ({ id, fileName, download, onClick }) => {
   let url = "";
-
   if (!fileName) {
     return null;
   }
@@ -156,8 +127,15 @@ const MyFileIcon = ({ id, fileName, download }) => {
     url = fileName;
   }
 
+  if (!download) {
+    return (
+      <IconButton sx={{ color: "primary.dark" }} onClick={onClick}>
+        {download ? <FileDownloadIcon /> : <DescriptionIcon />}
+      </IconButton>
+    );
+  }
   return (
-    <IconButton href={url} target="_blank" sx={{ color: "primary.main" }}>
+    <IconButton href={url} target="_blank" sx={{ color: "primary.dark" }}>
       {download ? <FileDownloadIcon /> : <DescriptionIcon />}
     </IconButton>
   );
@@ -166,9 +144,17 @@ MyFileIcon.propTypes = {
   id: PropTypes.number,
   fileName: PropTypes.string,
   download: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 
 const File = (props) => {
+  const dispatch = useDispatch();
+
+  const handleClickOpen = (id) => {
+    console.log("File handleClickOpen");
+    store.dispatch(runtime.setIsReporting(true));
+  };
+
   return (
     <>
       <Typography sx={{ flex: 1 }}>{props.name}</Typography>
@@ -182,6 +168,7 @@ const File = (props) => {
             id={props.fileid}
             fileName={props.predictions}
             download={false}
+            onClick={() => handleClickOpen(props.fileid)}
           />
           <MyFileIcon
             id={props.fileid}
@@ -208,6 +195,7 @@ File.propTypes = {
   fileid: PropTypes.number,
   predictions: PropTypes.string,
   message: PropTypes.string,
+  token: PropTypes.string,
 };
 
 const FileLoading = ({ loading, len }) => {
@@ -243,37 +231,17 @@ FileLoading.propTypes = {
   len: PropTypes.number,
 };
 
-const FileList = ({ files, token, module }) => {
+const FileList = ({ files, token, open, module }) => {
   const isLoading = useSelector((state) => state.runtime.isLoading);
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = (id, token, prediction_file) => {
-    console.log("handleClickOpen clicked " + id);
-    if (prediction_file) {
-      setOpen(true);
-      console.log("handleClickOpen has predictions " + id);
-    } else {
-      getPrediction(id);
-      console.log("handleClickOpen predicting " + id);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    dispatch({ type: IS_REPORTING, reporting: false });
-  };
 
   const dispatch = useDispatch();
 
   const getPrediction = (id) => {
     console.log("clicked " + id);
-    dispatch({ type: IS_LOADING, isLoading: true });
 
     try {
       dispatch(predictionActions.predict(id, token));
-      dispatch({ type: IS_LOADING, isLoading: false });
       // Open Modal with Results
-      dispatch({ type: IS_REPORTING, reporting: true });
       dispatch(fetchFiles({ token: token, fileType: props.module }));
     } catch (err) {
       // Throw err
@@ -284,24 +252,12 @@ const FileList = ({ files, token, module }) => {
     return files.map((file_blob) => JSON.parse(file_blob));
   }, [files]);
 
-  files_list.map((file) => {
-    if (file.message) {
-      console.log("File Error: ", file.name, file.message);
-    }
-  });
-
   return (
     <List className={styles.filelist}>
       {isLoading || files_list.length === 0 ? (
         <FileLoading loading={isLoading} len={files_list.length} />
       ) : (
         files_list.map((file, index) => (
-          // <ListItemButton
-          //   key={file.id}
-          //   onClick={() =>
-          //     handleClickOpen(file.id, token, file.prediction_file)
-          //   }
-          // >
           <ListItem
             key={file.id}
             sx={
@@ -320,6 +276,7 @@ const FileList = ({ files, token, module }) => {
               predictions={file.prediction_file}
               token={token}
               module={module}
+              open={open}
             />
             {0 && file?.message ? (
               <Typography style={{ flex: 1, flexGrow: 3, color: "red" }}>
@@ -327,7 +284,6 @@ const FileList = ({ files, token, module }) => {
               </Typography>
             ) : null}
           </ListItem>
-          // </ListItemButton>
         ))
       )}
     </List>
@@ -337,28 +293,36 @@ FileList.propTypes = {
   files: PropTypes.array,
   token: PropTypes.string,
   module: PropTypes.string,
+  open: PropTypes.bool,
 };
 
 const Report = (props) => {
   const isLoading = useSelector((state) => state.runtime.isLoading);
   const userToken = useSelector((state) => state.auth.userToken);
   const files = useSelector((state) => state.files.allFiles);
-  const reportType = props.module ? props.module : "aid";
+  const reporting = useSelector((state) => state.runtime.reporting);
+  const [modalContents, setModalContents] = React.useState(null);
 
+  const reportType = props.module ? props.module : "aid";
   const dispatch = useDispatch();
 
+  const handleClose = () => {
+    console.log("Report handleClose");
+    store.dispatch(runtime.setIsReporting(false));
+  };
+
   const loadFiles = useCallback(async () => {
-    dispatch({ type: IS_LOADING, loading: true });
+    runtime.setIsLoading(true);
     try {
       dispatch(fetchFiles({ token: userToken, fileType: reportType })).then(
         (response) => {
           console.log("report fetchFiles response", response);
+          runtime.setIsLoading(false);
         }
       );
     } catch (err) {
       // Throw an error
     }
-    dispatch({ type: IS_LOADING, loading: false });
   }, [dispatch, userToken, reportType]);
 
   useEffect(() => {
@@ -395,6 +359,11 @@ const Report = (props) => {
           )}
         </div>
       </div>
+      <ReportDialog
+        token={userToken}
+        open={reporting}
+        handleClose={handleClose}
+      />
     </Box>
   );
 };

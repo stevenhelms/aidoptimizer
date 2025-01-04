@@ -5,7 +5,7 @@ const initialState = {
   isLoading: false,
 };
 
-const runtimeSlice = createSlice({
+const runtime = createSlice({
   name: "runtime",
   initialState,
   reducers: {
@@ -18,7 +18,5 @@ const runtimeSlice = createSlice({
   },
 });
 
-export const { setIsLoading, setIsReporting } = runtimeSlice.actions;
-
-export default runtimeSlice.reducer;
-// Compare this snippet from src/store/actions/runtime.js:
+export const { setIsLoading, setIsReporting } = runtime.actions;
+export default runtime.reducer;
