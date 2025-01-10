@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Link,
   List,
   ListItem,
   ListItemIcon,
@@ -146,7 +147,7 @@ const MyFileIcon = ({ id, fileName, download, onClick }) => {
     );
   }
   return (
-    <IconButton href={url} target="_blank" sx={{ color: "primary.main" }}>
+    <IconButton href={url} sx={{ color: "primary.main" }}>
       {download ? <FileDownloadIcon /> : <DescriptionIcon />}
     </IconButton>
   );
@@ -170,9 +171,13 @@ const File = (props) => {
     });
   };
 
+  const url = settings.api_url + "/download/" + props.fileid + "/source";
+
   return (
     <>
-      <Typography sx={{ flex: 1 }}>{props.name}</Typography>
+      <Typography sx={{ flex: 1 }}>
+        <Link href={url}>{props.name}</Link>
+      </Typography>
       <Typography sx={{ flex: 2 }}>
         {new Date(props.createdAt).toLocaleString()}
       </Typography>
