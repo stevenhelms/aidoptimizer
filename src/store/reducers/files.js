@@ -1,4 +1,4 @@
-import { FETCH_FILES } from "../actions/files";
+import { FETCH_FILES } from '../actions/files';
 
 const initialState = {
   isLoading: false,

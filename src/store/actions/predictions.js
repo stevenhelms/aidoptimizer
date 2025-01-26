@@ -1,17 +1,15 @@
-import Prediction from "../../models/predictions";
-import settings from "../../constants/settings";
+import settings from '../../constants/settings';
 
-export const GET_PREDICTION = "GET_PREDICTION";
+export const GET_PREDICTION = 'GET_PREDICTION';
 
 export const predict = (id, token) => {
-  // console.log("api_token", token);
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     const response = await fetch(settings.api_url + `/predict/${id}/`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Authorization: "Token " + token,
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
+        Authorization: 'Token ' + token,
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
       },
     });
 
@@ -26,11 +24,11 @@ export const predict = (id, token) => {
     console.log(responseData);
     const loadedPreds = [];
 
-    for (const key in responseData["data"]) {
+    for (const key in responseData['data']) {
       loadedPreds.push(
         JSON.stringify({
-          id: responseData["data"][key].id,
-          score: responseData["data"][key].score,
+          id: responseData['data'][key].id,
+          score: responseData['data'][key].score,
         })
       );
     }
@@ -38,7 +36,7 @@ export const predict = (id, token) => {
     dispatch({
       type: GET_PREDICTION,
       predictions: loadedPreds,
-      file: responseData["csv_file"],
+      file: responseData['csv_file'],
     });
   };
 };

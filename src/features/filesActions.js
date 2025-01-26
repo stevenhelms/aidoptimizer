@@ -1,29 +1,28 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import File from "../models/files";
-import settings from "../constants/settings";
-import { setFileList, setFilePredictions } from "./filesSlice";
+import settings from '../constants/settings';
+import { setFileList, setFilePredictions } from './filesSlice';
 
 export const fetchFiles = createAsyncThunk(
-  "files/fetchFiles",
+  'files/fetchFiles',
   async ({ token, fileType }, { rejectWithValue }) => {
     try {
       // configure header's Content-Type as JSON
       const config = {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-          Authorization: "Token " + token,
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+          Authorization: 'Token ' + token,
         },
         withCredentials: true, // send cookies when cross-domain requests
       };
-      const url = settings.api_url + "/files/?module=" + fileType;
+      const url = settings.api_url + '/files/?module=' + fileType;
       const response = await fetch(url, config);
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log("fetchFiles", errorData);
+        console.log('fetchFiles', errorData);
         // throw error
       }
 
@@ -61,34 +60,34 @@ export const fetchFiles = createAsyncThunk(
 );
 
 export const fetchPredictions = createAsyncThunk(
-  "files/fetchPredictions",
+  'files/fetchPredictions',
   async ({ id, token }, { rejectWithValue }) => {
     try {
       // configure header's Content-Type as JSON
       const config = {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-          Authorization: "Token " + token,
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+          Authorization: 'Token ' + token,
         },
         withCredentials: true, // send cookies when cross-domain requests
       };
-      const url = settings.api_url + "/download/" + id + "/";
+      const url = settings.api_url + '/download/' + id + '/';
       const response = await fetch(url, config);
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log("filesActions.fetchPredictions", errorData);
+        console.log('filesActions.fetchPredictions', errorData);
         // throw error
       }
 
       const responseData = await response.json();
       console.log(responseData);
       const predictions = [];
-      for (const item of responseData["data"]) {
-        const [id, score] = item.split(",");
-        if (id === "id" || id === "") {
+      for (const item of responseData['data']) {
+        const [id, score] = item.split(',');
+        if (id === 'id' || id === '') {
           // Skip the header and blank rows
           continue;
         }

@@ -1,20 +1,20 @@
-import axios from "axios";
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from 'axios';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import settings from "../constants/settings";
+import settings from '../constants/settings';
 
 const backendURL = settings.api_url;
 
 export const userLogin = createAsyncThunk(
-  "auth/login",
+  'auth/login',
   async ({ username, password, csrfmiddlewaretoken }, { rejectWithValue }) => {
     try {
       // configure header's Content-Type as JSON
       const config = {
         headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfmiddlewaretoken,
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfmiddlewaretoken,
         },
         withCredentials: true, // send cookies when cross-domain requests
       };

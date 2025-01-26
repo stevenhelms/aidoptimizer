@@ -1,11 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
-import { userLogin } from "./authActions";
+import { userLogin } from './authActions';
 
 // initialize userToken from local storage
-const userToken = localStorage.getItem("userToken")
-  ? localStorage.getItem("userToken")
-  : null;
+const userToken = localStorage.getItem('userToken') ? localStorage.getItem('userToken') : null;
 
 const initialState = {
   isLoading: false,
@@ -17,11 +15,11 @@ const initialState = {
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
-      localStorage.removeItem("userToken"); // delete token from storage
+      localStorage.removeItem('userToken'); // delete token from storage
       state.isLoading = false;
       state.userInfo = null;
       state.userToken = null;
@@ -29,10 +27,10 @@ const authSlice = createSlice({
       state.errorField = null;
     },
     setCredentials: (state, { payload }) => {
-      console.log("setCredentials", payload);
+      console.log('setCredentials', payload);
       state.userInfo = payload;
       state.userToken = payload.token;
-      localStorage.setItem("userToken", payload.token); // save token to storage
+      localStorage.setItem('userToken', payload.token); // save token to storage
     },
     setAuthIsLoading: (state, { payload }) => {
       state.isLoading = payload;
@@ -40,12 +38,12 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Add extra reducers here
-    builder.addCase(userLogin.pending, (state, action) => {
+    builder.addCase(userLogin.pending, (state) => {
       state.isLoading = true;
     });
 
     builder.addCase(userLogin.fulfilled, (state, action) => {
-      localStorage.setItem("userToken", action.payload.token); // save token to storage
+      localStorage.setItem('userToken', action.payload.token); // save token to storage
       state.isLoading = false;
       state.userInfo = action.payload;
       state.userToken = action.payload.token;
@@ -54,7 +52,7 @@ const authSlice = createSlice({
     });
 
     builder.addCase(userLogin.rejected, (state, action) => {
-      console.log("userLogin.rejected", action);
+      console.log('userLogin.rejected', action);
       state.isLoading = false;
       state.userInfo = null;
       state.error = action.payload;

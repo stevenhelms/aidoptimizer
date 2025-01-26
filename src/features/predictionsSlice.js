@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   predictions: [],
@@ -6,7 +6,7 @@ const initialState = {
 };
 
 const predictionsSlice = createSlice({
-  name: "predictions",
+  name: 'predictions',
   initialState,
   reducers: {
     getPrediction: (state, action) => {

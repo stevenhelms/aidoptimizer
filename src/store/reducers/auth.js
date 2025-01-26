@@ -1,5 +1,5 @@
-import * as actionTypes from "../actions/actionTypes";
-import { updateObject } from "../utility";
+import * as actionTypes from '../actions/actionTypes';
+import { updateObject } from '../utility';
 
 const initialState = {
   token: null,
@@ -7,10 +7,10 @@ const initialState = {
   errorField: null,
   isLoading: false,
   isAuthenticated: false,
-  authRedirectPath: "/",
+  authRedirectPath: '/',
 };
 
-const authStart = (state, action) => {
+const authStart = (state) => {
   return updateObject(state, {
     error: null,
     errorField: null,
@@ -39,7 +39,7 @@ const authFail = (state, action) => {
   });
 };
 
-const authLogout = (state, action) => {
+const authLogout = (state) => {
   return updateObject(state, { token: null, userId: null });
 };
 

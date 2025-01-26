@@ -1,9 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../features/authSlice";
-import runtime from "../features/runtimeSlice";
-import filesReducer from "../features/filesSlice";
-import predictionsReducer from "../features/predictionsSlice";
-import { authApi } from "./services/authService";
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from '../features/authSlice';
+import runtime from '../features/runtimeSlice';
+import filesReducer from '../features/filesSlice';
+import predictionsReducer from '../features/predictionsSlice';
+import { authApi } from './services/authService';
 
 const store = configureStore({
   reducer: {
@@ -13,8 +13,7 @@ const store = configureStore({
     files: filesReducer,
     predictions: predictionsReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(authApi.middleware),
 });
 
 export default store;

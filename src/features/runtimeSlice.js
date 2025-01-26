@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   reporting: false,
@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const runtime = createSlice({
-  name: "runtime",
+  name: 'runtime',
   initialState,
   reducers: {
     setIsLoading: (state, action) => {

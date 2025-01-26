@@ -10,15 +10,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
-// import Modal from "react-modal";
-// import {
-//   AnchorButton,
-//   Button,
-//   Classes,
-//   Dialog,
-//   Intent,
-// } from "@blueprintjs/core";
-
 import settings from "../constants/settings";
 import { IS_REPORTING } from "../store/actions/runtime";
 
@@ -74,7 +65,6 @@ const ReportModal = ({ id }) => {
       </Box>
     </Modal>
   );
-  
 };
 
 export default ReportModal;

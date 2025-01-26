@@ -1,11 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 
-import AuthReducer from "./reducers/auth";
-import FilesReducer from "./reducers/files";
-import PredictionsReducer from "./reducers/predictions";
-import RuntimeReducer from "./reducers/runtime";
+import AuthReducer from './reducers/auth';
+import FilesReducer from './reducers/files';
+import PredictionsReducer from './reducers/predictions';
+import RuntimeReducer from './reducers/runtime';
 
-export const createStore = (state) => {
+export const createStore = () => {
   configureStore({
     dispatch: {
       onTryAutoSignup: () => dispatch(actions.authCheckState()),
@@ -24,7 +24,7 @@ export const createStore = (state) => {
 };
 
 // features/auth/authSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isLoading: false,
@@ -35,7 +35,7 @@ const initialState = {
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {},
   // extraReducers: {},

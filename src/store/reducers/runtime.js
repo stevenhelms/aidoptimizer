@@ -1,4 +1,4 @@
-import { IS_LOADING, IS_REPORTING } from "../actions/runtime";
+import { IS_LOADING, IS_REPORTING } from '../actions/runtime';
 
 const initialState = {
   reporting: false,

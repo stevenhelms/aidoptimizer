@@ -1,6 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchFiles, fetchPredictions } from "./filesActions";
+import { fetchFiles, fetchPredictions } from './filesActions';
 
 const initialState = {
   isLoading: false,
@@ -10,7 +10,7 @@ const initialState = {
 };
 
 const filesSlice = createSlice({
-  name: "files",
+  name: 'files',
   initialState,
   reducers: {
     setState: (state, action) => {
@@ -20,12 +20,12 @@ const filesSlice = createSlice({
       state.allFiles = action.payload;
     },
     setFilePredictions: (state, action) => {
-      console.log("setFilePredictions", action.payload);
+      console.log('setFilePredictions', action.payload);
       state.filePredictions = action.payload;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchFiles.pending, (state, action) => {
+    builder.addCase(fetchFiles.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(fetchFiles.fulfilled, (state, action) => {
@@ -36,11 +36,11 @@ const filesSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     });
-    builder.addCase(fetchPredictions.pending, (state, action) => {
+    builder.addCase(fetchPredictions.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(fetchPredictions.fulfilled, (state, action) => {
-      console.log("fetchPredictions.fulfilled", action.payload);
+      console.log('fetchPredictions.fulfilled', action.payload);
       state.isLoading = false;
       state.filePredictions = action.payload;
     });

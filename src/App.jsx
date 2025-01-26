@@ -10,7 +10,6 @@ import Logout from "./containers/Auth/Logout/Logout";
 
 import "./index.css";
 import "normalize.css/normalize.css";
-// import "@blueprintjs/core/lib/css/blueprint.css";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";

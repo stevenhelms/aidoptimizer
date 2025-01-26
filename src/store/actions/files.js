@@ -1,17 +1,17 @@
-import File from "../../models/files";
-import settings from "../../constants/settings";
+import File from '../../models/files';
+import settings from '../../constants/settings';
 
-export const FETCH_FILES = "FETCH_FILES";
+export const FETCH_FILES = 'FETCH_FILES';
 
 export const fetchFiles = (token, fileType) => {
-  return async (dispatch, getState) => {
-    const url = settings.api_url + "/files/?module=" + fileType;
+  return async (dispatch) => {
+    const url = settings.api_url + '/files/?module=' + fileType;
     const response = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Authorization: "Token " + token,
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
+        Authorization: 'Token ' + token,
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
       },
     });
 
@@ -35,9 +35,7 @@ export const fetchFiles = (token, fileType) => {
         message: responseData[key].message ? responseData[key].message : null,
         created_at: responseData[key].created_at,
       };
-      loadedFiles.push(
-        new File(responseData[key].id, responseData[key].user, fileData)
-      );
+      loadedFiles.push(new File(responseData[key].id, responseData[key].user, fileData));
     }
 
     dispatch({
