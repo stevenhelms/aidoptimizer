@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
-import settings from "../../constants/settings";
-import * as actionTypes from "./actionTypes";
+import settings from '../../constants/settings';
+import * as actionTypes from './actionTypes';
 
 export const authStart = () => {
   return {
@@ -21,12 +21,12 @@ export const authFail = (error) => {
 
   // let keys = Object.keys(error.data);
   let [msg, field] = Object.keys(error?.data).map((key) => {
-    let m = "";
-    if (key === "email" || key === "password") {
-      m = key.charAt(0).toUpperCase() + key.slice(1) + ": ";
+    let m = '';
+    if (key === 'email' || key === 'password') {
+      m = key.charAt(0).toUpperCase() + key.slice(1) + ': ';
     }
     // console.log('authFail: '+ key);
-    return m + error?.data[key] + " ";
+    return m + error?.data[key] + ' ';
   });
 
   return {
@@ -37,8 +37,8 @@ export const authFail = (error) => {
 };
 
 export const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("expirationDate");
+  localStorage.removeItem('token');
+  localStorage.removeItem('expirationDate');
   return {
     type: actionTypes.AUTH_LOGOUT,
   };
@@ -60,10 +60,10 @@ export const auth = (email, password) => {
       password: password,
     };
 
-    let url = settings.api_url + "/auth/login/";
+    let url = settings.api_url + '/auth/login/';
     const options = {
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Origin': '*',
       },
     };
     axios
@@ -73,8 +73,8 @@ export const auth = (email, password) => {
         // console.log(response);
         // console.log(response.data.key);
         const expirationDate = new Date(new Date().getTime() + 86400 * 1000); // One day expiration
-        localStorage.setItem("token", response.data.key);
-        localStorage.setItem("expirationDate", expirationDate);
+        localStorage.setItem('token', response.data.key);
+        localStorage.setItem('expirationDate', expirationDate);
         dispatch(authSuccess(response.key));
         // dispatch(checkAuthTimeout(expirationDate));
       })
@@ -93,7 +93,7 @@ export const setAuthRedirectPath = (path) => {
 
 export const authCheckState = () => {
   return (dispatch, getState) => {
-    let token = localStorage.getItem("token");
+    let token = localStorage.getItem('token');
     // console.log("---authCheckState--- 1 token " + token);
 
     if (!token) {

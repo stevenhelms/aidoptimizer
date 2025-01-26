@@ -1,14 +1,15 @@
 class File {
-    constructor(id, user, file, name, size, content_type, prediction_file, created_at) { 
-        this.id = id;
-        this.user = user;
-        this.file = file;
-        this.name = name;
-        this.size = size;
-        this.content_type = content_type;
-        this.prediction_file = prediction_file;
-        this.created_at = created_at;
-    }
-};
+  constructor(id, user, fileDetails) {
+    this.id = id;
+    this.user = user;
+    this.file = fileDetails.file;
+    this.name = fileDetails.name;
+    this.size = fileDetails.size;
+    this.content_type = fileDetails.content_type;
+    this.prediction_file = fileDetails.prediction_file;
+    this.message = fileDetails.message;
+    this.created_at = fileDetails.created_at;
+  }
+}
 
 export default File;

@@ -1,23 +1,17 @@
-import File from "../../models/files";
-import settings from "../../constants/settings";
+import File from '../../models/files';
+import settings from '../../constants/settings';
 
-export const FETCH_FILES = "FETCH_FILES";
+export const FETCH_FILES = 'FETCH_FILES';
 
 export const fetchFiles = (token, fileType) => {
-  // let token = localStorage.getItem("token");
-  // console.log('fetchFiles localstorage token: '+ token);
-  // token = stateToken;
-  // console.log('fetchFiles parameter token: '+ stateToken);
-
-  return async (dispatch, getState) => {
-    const url = settings.api_url + "/files/?module=" + fileType;
-    // console.log("fetchFiles url", url);
+  return async (dispatch) => {
+    const url = settings.api_url + '/files/?module=' + fileType;
     const response = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Authorization: "Token " + token,
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
+        Authorization: 'Token ' + token,
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
       },
     });
 
@@ -32,18 +26,16 @@ export const fetchFiles = (token, fileType) => {
     const loadedFiles = [];
 
     for (const key in responseData) {
-      loadedFiles.push(
-        new File(
-          responseData[key].id,
-          responseData[key].user,
-          responseData[key].file,
-          responseData[key].name,
-          responseData[key].size,
-          responseData[key].content_type,
-          responseData[key].prediction_file,
-          responseData[key].created_at
-        )
-      );
+      const fileData = {
+        file: responseData[key].file,
+        name: responseData[key].name,
+        size: responseData[key].size,
+        content_type: responseData[key].content_type,
+        prediction_file: responseData[key].prediction_file,
+        message: responseData[key].message ? responseData[key].message : null,
+        created_at: responseData[key].created_at,
+      };
+      loadedFiles.push(new File(responseData[key].id, responseData[key].user, fileData));
     }
 
     dispatch({

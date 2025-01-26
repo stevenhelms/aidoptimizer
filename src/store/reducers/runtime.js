@@ -1,8 +1,8 @@
-import { IS_LOADING, IS_REPORTING } from "../actions/runtime";
+import { IS_LOADING, IS_REPORTING } from '../actions/runtime';
 
 const initialState = {
   reporting: false,
-  loading: false,
+  isLoading: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -10,7 +10,7 @@ const reducer = (state = initialState, action) => {
     case IS_LOADING:
       return {
         ...state,
-        loading: action.loading,
+        isLoading: action.isLoading,
       };
     case IS_REPORTING:
       return {

@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Aid Optimizer",
+  "name": "Aid Optimizer",
   "icons": [
     {
       "src": "favicon.ico",
@@ -16,6 +16,12 @@
       "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["public/font/ProximaNova-Bold-webfont.woff2"],
+      "matches": ["<all_urls>"] // Or specify the URLs that need access
     }
   ],
   "start_url": ".",

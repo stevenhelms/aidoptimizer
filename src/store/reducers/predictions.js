@@ -1,4 +1,4 @@
-import { GET_PREDICTION } from "../actions/predictions";
+import { GET_PREDICTION } from '../actions/predictions';
 
 const initialState = {
   predictions: [],

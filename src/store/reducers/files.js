@@ -1,10 +1,13 @@
-import { FETCH_FILES } from "../actions/files";
+import { FETCH_FILES } from '../actions/files';
 
 const initialState = {
+  isLoading: false,
+  error: null,
   allFiles: [],
+  filePredictions: [],
 };
 
-const reducer = (state = initialState, action) => {
+export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_FILES:
       return {
